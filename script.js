@@ -16,10 +16,35 @@ var App = {
         fullscreenToggleSwitchInput: document.getElementById('fullscreen-toggle-switch'),
     },
 
-    // Iconos SVG para sol y luna. Son limpios, escalables y heredan el color.
+    // Iconos SVG para sol y luna. Ahora se cargan desde archivos externos para optimizar el bundle JS.
     icons: {
-        sun: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>',
-        moon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>'
+        sun: 'svg/sun.svg',
+        moon: 'svg/moon.svg'
+    },
+
+    // Nueva utilidad para cargar iconos SVG desde archivos externos, manteniendo 'currentColor'.
+    loadSvgIcon: function(url, targetElement) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(svgText => {
+                targetElement.innerHTML = svgText;
+            })
+            .catch(e => {
+                if (App.elements.debugLog) {
+                    var msg = document.createElement('p');
+                    var timestamp = new Date().toLocaleTimeString();
+                    msg.textContent = `[${timestamp}] ERROR al cargar SVG ${url}: ${e.message}`;
+                    msg.style.color = 'red';
+                    App.elements.debugLog.appendChild(msg);
+                    App.elements.debugLog.style.display = 'block';
+                }
+                targetElement.innerHTML = ''; // Clear icon on error
+            });
     },
 
     state: {
@@ -248,14 +273,18 @@ var App = {
                 App.elements.debugLog.appendChild(msg);
             }
             try {
+                // Initial loading state for geolocation
                 App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
-                                        
-                if ("geolocation" in navigator) {                            navigator.geolocation.getCurrentPosition(function(position) {
+                App.elements.sunInfo.style.opacity = 1; // Ensure it's visible
+
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
                                     App.trackEvent('geolocation_permission', { permission_status: 'granted' });
                                     var geo = {
                                         latitude: position.coords.latitude,
                                         longitude: position.coords.longitude
                                     };
+                                    // Update loading state for API call
                                     App.elements.sunInfo.innerHTML = 'Obteniendo datos solares...';
                                     var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.latitude +
                                                  '&longitude=' + geo.longitude + '&daily=sunrise,sunset&timezone=auto';
@@ -270,26 +299,39 @@ var App = {
                                         App.state.sunsetMinutes = timeStringToMinutes(sunData.daily.sunset[0]);
                                         App.theme.update();
                                         setInterval(function() { App.theme.update(); }, 60000);
-                                    }, function(error, url) { App.theme.onError(error, 'solares', url); });
+                                    }, function(error, url) {
+                                        // API request failed, display user-friendly error
+                                        App.elements.sunInfo.innerHTML = 'Error al obtener datos solares.';
+                                        App.elements.sunInfo.style.opacity = 1;
+                                        App.theme.onError(error, 'solares', url);
+                                    });
                                                 }, function(error) {
-                                                    var errorMessage = 'Error desconocido de Geolocation.';
+                                                    var errorMessage;
                                                     switch (error.code) {
                                                         case error.PERMISSION_DENIED:
-                                                            errorMessage = 'Permiso de ubicación denegado por el usuario.';
+                                                            errorMessage = 'Permiso de ubicación denegado. No se puede obtener información solar.';
                                                             break;
                                                         case error.POSITION_UNAVAILABLE:
-                                                            errorMessage = 'Información de ubicación no disponible.';
+                                                            errorMessage = 'Información de ubicación no disponible. No se puede obtener información solar.';
                                                             break;
                                                         case error.TIMEOUT:
-                                                            errorMessage = 'La solicitud para obtener la ubicación ha caducado.';
+                                                            errorMessage = 'La solicitud para obtener la ubicación ha caducado. No se puede obtener información solar.';
+                                                            break;
+                                                        default:
+                                                            errorMessage = 'Error desconocido de Geolocation. No se puede obtener información solar.';
                                                             break;
                                                     }
                                                     App.trackEvent('geolocation_permission', { permission_status: 'denied', error_message: errorMessage });
+                                                    App.elements.sunInfo.innerHTML = errorMessage;
+                                                    App.elements.sunInfo.style.opacity = 1;
                                                     App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
                                                 });
                                             } else {
-                                                App.trackEvent('geolocation_error', { error_message: 'Geolocalización no soportada por el navegador.' });
-                                                App.theme.onError(new Error('Geolocalización no soportada por el navegador.'), 'geolocation', 'navigator.geolocation');
+                                                var errorMessage = 'Geolocalización no soportada por el navegador. No se puede obtener información solar.';
+                                                App.trackEvent('geolocation_error', { error_message: errorMessage });
+                                                App.elements.sunInfo.innerHTML = errorMessage;
+                                                App.elements.sunInfo.style.opacity = 1;
+                                                App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
                                             }
             } catch (e) {
                 if (App.elements.debugLog) {
@@ -300,6 +342,8 @@ var App = {
                     App.elements.debugLog.appendChild(msg);
                     App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
                 }
+                App.elements.sunInfo.innerHTML = 'Error de inicialización.';
+                App.elements.sunInfo.style.opacity = 1;
             }
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
@@ -315,10 +359,26 @@ var App = {
             var isNight = nowMinutes < App.state.sunriseMinutes || nowMinutes > App.state.sunsetMinutes;
             this.set(isNight);
             var targetMinutes = isNight ? App.state.sunriseMinutes : App.state.sunsetMinutes;
-            var icon = isNight ? App.icons.sun : App.icons.moon;
+            var iconUrl = isNight ? App.icons.sun : App.icons.moon;
             var hours = String(Math.floor(targetMinutes / 60)).padStart(2, '0');
             var minutes = String(targetMinutes % 60).padStart(2, '0');
-            App.elements.sunInfo.innerHTML = icon + '<span>' + hours + ':' + minutes + '</span>';
+
+            // Clear previous content
+            App.elements.sunInfo.innerHTML = '';
+
+            // Create a container for the SVG icon
+            var iconContainer = document.createElement('span');
+            iconContainer.className = 'sun-moon-icon';
+            App.elements.sunInfo.appendChild(iconContainer);
+
+            // Load SVG icon into the container
+            App.loadSvgIcon(iconUrl, iconContainer);
+            
+            // Add time text
+            var timeSpan = document.createElement('span');
+            timeSpan.textContent = hours + ':' + minutes;
+            App.elements.sunInfo.appendChild(timeSpan);
+            
             App.elements.sunInfo.style.opacity = 1;
         },
         set: function(isDark) {
@@ -334,15 +394,8 @@ var App = {
                 var debugMessage = document.createElement('p');
                 var timestamp = new Date().toLocaleTimeString();
                 debugMessage.textContent = `[${timestamp}] ERROR en '${step}' (${url}): ${error.message || error.toString()}`;
+                debugMessage.style.color = 'red';
                 App.elements.debugLog.appendChild(debugMessage);
-
-                // Log functional error for 'solares' step
-                if (step === 'solares') {
-                    var debugFunctionalError = document.createElement('p');
-                    debugFunctionalError.textContent = `[${timestamp}] ERROR FUNCIONAL: Servicio de hora no disponible.`;
-                    debugFunctionalError.style.color = 'var(--text-color)'; // Make legible against debug log background
-                    App.elements.debugLog.appendChild(debugFunctionalError);
-                }
 
                 // Limit debug log to prevent UI clutter
                 while (App.elements.debugLog.children.length > 10) {
@@ -351,7 +404,8 @@ var App = {
             }
 
             // Ensure sunInfo is hidden if there's an error and it's not showing actual data
-            App.elements.sunInfo.style.opacity = 0;
+            // (This might be overridden by calling functions if they want to display an error message)
+            // App.elements.sunInfo.style.opacity = 0;
         }
     },
 
@@ -566,6 +620,39 @@ var App = {
 
             // Initialize anti-burn-in functionality
             App.antiBurnIn.init();
+
+            // Register Service Worker for offline support
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then(registration => {
+                            if (App.elements.debugLog) {
+                                var msg = document.createElement('p');
+                                var timestamp = new Date().toLocaleTimeString();
+                                msg.textContent = `[${timestamp}] ServiceWorker registrado con éxito. Scope: ${registration.scope}`;
+                                App.elements.debugLog.appendChild(msg);
+                            }
+                        })
+                        .catch(error => {
+                            if (App.elements.debugLog) {
+                                var msg = document.createElement('p');
+                                var timestamp = new Date().toLocaleTimeString();
+                                msg.textContent = `[${timestamp}] Fallo el registro del ServiceWorker: ${error}`;
+                                msg.style.color = 'red';
+                                App.elements.debugLog.appendChild(msg);
+                                App.elements.debugLog.style.display = 'block';
+                            }
+                        });
+                });
+            } else {
+                if (App.elements.debugLog) {
+                    var msg = document.createElement('p');
+                    var timestamp = new Date().toLocaleTimeString();
+                    msg.textContent = `[${timestamp}] ServiceWorkers no soportados por este navegador.`;
+                    msg.style.color = 'orange';
+                    App.elements.debugLog.appendChild(msg);
+                }
+            }
         } catch (e) {
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
