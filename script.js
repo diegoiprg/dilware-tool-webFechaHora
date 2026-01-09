@@ -132,27 +132,38 @@ var App = {
     
     theme: {
         init: function() {
-            App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
-            App.elements.sunInfo.style.opacity = 1;
-
-            App.makeApiRequest('https://ipapi.co/json/', function(geo) {
-                App.elements.sunInfo.innerHTML = 'Obteniendo datos solares...';
-                var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.latitude + 
-                             '&longitude=' + geo.longitude + '&daily=sunrise,sunset&timezone=auto';
-                App.makeApiRequest(apiUrl, function(sunData) {
-                    function timeStringToMinutes(isoString) {
-                        var timePart = isoString.split('T')[1];
-                        var hours = parseInt(timePart.split(':')[0], 10);
-                        var minutes = parseInt(timePart.split(':')[1], 10);
-                        return (hours * 60) + minutes;
-                    }
-                    App.state.sunriseMinutes = timeStringToMinutes(sunData.daily.sunrise[0]);
-                    App.state.sunsetMinutes = timeStringToMinutes(sunData.daily.sunset[0]);
-                    App.theme.update();
-                    setInterval(function() { App.theme.update(); }, 60000);
-                }, function(error, url) { App.theme.onError(error, 'solares', url); });
-            }, function(error, url) { App.theme.onError(error, 'ubicación', url); });
-        },
+                        App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
+                        App.elements.sunInfo.style.opacity = 1;
+            
+                        if ("geolocation" in navigator) {
+                            navigator.geolocation.getCurrentPosition(function(position) {
+                                var geo = {
+                                    latitude: position.coords.latitude,
+                                    longitude: position.coords.longitude
+                                };
+                                App.elements.sunInfo.innerHTML = 'Obteniendo datos solares...';
+                                var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.latitude +
+                                             '&longitude=' + geo.longitude + '&daily=sunrise,sunset&timezone=auto';
+                                App.makeApiRequest(apiUrl, function(sunData) {
+                                    function timeStringToMinutes(isoString) {
+                                        var timePart = isoString.split('T')[1];
+                                        var hours = parseInt(timePart.split(':')[0], 10);
+                                        var minutes = parseInt(timePart.split(':')[1], 10);
+                                        return (hours * 60) + minutes;
+                                    }
+                                    App.state.sunriseMinutes = timeStringToMinutes(sunData.daily.sunrise[0]);
+                                    App.state.sunsetMinutes = timeStringToMinutes(sunData.daily.sunset[0]);
+                                    App.theme.update();
+                                    setInterval(function() { App.theme.update(); }, 60000);
+                                }, function(error, url) { App.theme.onError(error, 'solares', url); });
+                            }, function(error) {
+                                // Geolocation error
+                                App.theme.onError(error, 'geolocation', 'navigator.geolocation');
+                            });
+                        } else {
+                            // Geolocation not supported
+                            App.theme.onError(new Error('Geolocation no soportada'), 'geolocation', 'navigator.geolocation');
+                        }        },
         update: function() {
             if (App.state.sunriseMinutes === null || App.state.sunsetMinutes === null) return;
             var now = new Date();
