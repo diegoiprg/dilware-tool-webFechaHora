@@ -210,7 +210,7 @@ body {
 }
 
 .action-button:hover {
-    background-color: rgba(128, 128, 128, 0.05); /* Even more subtle hover effect */
+    background-color: transparent; /* Remove hover effect from container */
 }
 
 .action-button.top-right {

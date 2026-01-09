@@ -13,6 +13,7 @@ var App = {
         debugLog: document.getElementById('debug-log'),
         debugToggleSwitchInput: document.getElementById('debug-toggle-switch'),
         darkModeToggleSwitchInput: document.getElementById('dark-mode-toggle-switch'),
+        fullscreenToggleSwitchInput: document.getElementById('fullscreen-toggle-switch'),
     },
 
     // Iconos SVG para sol y luna. Son limpios, escalables y heredan el color.
@@ -225,19 +226,46 @@ var App = {
 
     fullscreen: {
         init: function() {
-            App.elements.clock.addEventListener('click', function(e) {
-                App.fullscreen.toggle();
-            });
+            if (App.elements.fullscreenToggleSwitchInput) {
+                // Load fullscreen state from localStorage
+                var isFullscreenOn = localStorage.getItem('fullscreenOn') === 'true';
+                App.elements.fullscreenToggleSwitchInput.checked = isFullscreenOn;
+
+                // If fullscreen was on, try to re-enter
+                if (isFullscreenOn) {
+                    var el = document.documentElement;
+                    if (el.requestFullscreen) el.requestFullscreen();
+                    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+                }
+
+                App.elements.fullscreenToggleSwitchInput.addEventListener('change', function() {
+                    var isChecked = App.elements.fullscreenToggleSwitchInput.checked;
+                    App.fullscreen.toggle();
+                    localStorage.setItem('fullscreenOn', isChecked); // Save state
+                });
+            }
         },
         toggle: function() {
             var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
-            if (!fsEl) {
+            var isSwitchChecked = App.elements.fullscreenToggleSwitchInput ? App.elements.fullscreenToggleSwitchInput.checked : false;
+
+            if (!fsEl && isSwitchChecked) { // Enter fullscreen if not in it and switch is checked
                 var el = document.documentElement;
                 if (el.requestFullscreen) el.requestFullscreen();
                 else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-            } else {
+            } else if (fsEl && !isSwitchChecked) { // Exit fullscreen if in it and switch is unchecked
                 if (document.exitFullscreen) document.exitFullscreen();
                 else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            }
+            // If the user exits fullscreen via ESC key, the switch should update
+            document.addEventListener('fullscreenchange', App.fullscreen.updateSwitchState);
+            document.addEventListener('webkitfullscreenchange', App.fullscreen.updateSwitchState);
+        },
+        updateSwitchState: function() {
+            if (App.elements.fullscreenToggleSwitchInput) {
+                var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+                App.elements.fullscreenToggleSwitchInput.checked = (fsEl !== null);
+                localStorage.setItem('fullscreenOn', (fsEl !== null));
             }
         }
     },
