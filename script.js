@@ -10,6 +10,7 @@ var App = {
         sunInfo: document.getElementById('sun-info'),
         calendarHeader: document.getElementById('calendar-header'),
         calendarGrid: document.getElementById('calendar-grid'),
+        debugLog: document.getElementById('debug-log'),
     },
 
     // Iconos SVG para sol y luna. Son limpios, escalables y heredan el color.
@@ -156,14 +157,24 @@ var App = {
                                     App.theme.update();
                                     setInterval(function() { App.theme.update(); }, 60000);
                                 }, function(error, url) { App.theme.onError(error, 'solares', url); });
-                            }, function(error) {
-                                // Geolocation error
-                                App.theme.onError(error, 'geolocation', 'navigator.geolocation');
-                            });
-                        } else {
-                            // Geolocation not supported
-                            App.theme.onError(new Error('Geolocation no soportada'), 'geolocation', 'navigator.geolocation');
-                        }        },
+                                            }, function(error) {
+                                                var errorMessage = 'Error desconocido de Geolocation.';
+                                                switch (error.code) {
+                                                    case error.PERMISSION_DENIED:
+                                                        errorMessage = 'Permiso de ubicación denegado por el usuario.';
+                                                        break;
+                                                    case error.POSITION_UNAVAILABLE:
+                                                        errorMessage = 'Información de ubicación no disponible.';
+                                                        break;
+                                                    case error.TIMEOUT:
+                                                        errorMessage = 'La solicitud para obtener la ubicación ha caducado.';
+                                                        break;
+                                                }
+                                                App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
+                                            });
+                                        } else {
+                                            App.theme.onError(new Error('Geolocalización no soportada por el navegador.'), 'geolocation', 'navigator.geolocation');
+                                        }        },
         update: function() {
             if (App.state.sunriseMinutes === null || App.state.sunsetMinutes === null) return;
             var now = new Date();
@@ -183,6 +194,17 @@ var App = {
         },
         onError: function(error, step, url) {
             console.error("Fallo en el paso '" + step + "' (" + url + "):", error);
+
+            var debugMessage = document.createElement('p');
+            var timestamp = new Date().toLocaleTimeString();
+            debugMessage.textContent = `[${timestamp}] ERROR en '${step}' (${url}): ${error.message || error.toString()}`;
+            App.elements.debugLog.appendChild(debugMessage);
+
+            // Limit debug log to prevent UI clutter
+            while (App.elements.debugLog.children.length > 10) {
+                App.elements.debugLog.removeChild(App.elements.debugLog.firstChild);
+            }
+
             App.theme.set(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
             App.elements.sunInfo.innerHTML = 'Servicio de hora no disponible.';
             App.elements.sunInfo.style.opacity = 1;
