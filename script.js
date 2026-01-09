@@ -11,7 +11,7 @@ var App = {
         calendarHeader: document.getElementById('calendar-header'),
         calendarGrid: document.getElementById('calendar-grid'),
         debugLog: document.getElementById('debug-log'),
-        debugToggleButton: document.getElementById('debug-toggle-button'),
+        debugToggleSwitchInput: document.getElementById('debug-toggle-switch'),
     },
 
     // Iconos SVG para sol y luna. Son limpios, escalables y heredan el color.
@@ -234,7 +234,8 @@ var App = {
                 switchLabel.appendChild(switchSlider);
                 themeToggleContainer.appendChild(switchLabel);
                 
-                switchInput.addEventListener('change', function() {
+                switchInput.addEventListener('change', function(e) {
+                    e.stopPropagation(); // Prevent event from bubbling up to dashboard and triggering fullscreen
                     App.theme.set(switchInput.checked);
                 });
                 App.elements.sunInfo.appendChild(themeToggleContainer);
@@ -245,14 +246,7 @@ var App = {
 
     fullscreen: {
         init: function() {
-            App.elements.dashboard.addEventListener('click', function(e) {
-                var el = e.target;
-                while (el && el !== App.elements.dashboard) {
-                    if (el.classList.contains('nav-arrow') || el.classList.contains('calendar-title')) {
-                        return;
-                    }
-                    el = el.parentElement;
-                }
+            App.elements.clock.addEventListener('click', function(e) {
                 App.fullscreen.toggle();
             });
         },
@@ -276,10 +270,11 @@ var App = {
         this.theme.init();
         this.fullscreen.init();
 
-        if (App.elements.debugToggleButton && App.elements.debugLog) {
-            App.elements.debugToggleButton.style.display = 'block'; // Make button visible
-            App.elements.debugToggleButton.addEventListener('click', function() {
-                if (App.elements.debugLog.style.display === 'none') {
+        if (App.elements.debugToggleSwitchInput && App.elements.debugLog) {
+            // The switch container (div.action-button) is already block by default,
+            // so we just need to ensure the switch input is handled.
+            App.elements.debugToggleSwitchInput.addEventListener('change', function() {
+                if (App.elements.debugToggleSwitchInput.checked) {
                     App.elements.debugLog.style.display = 'block';
                 } else {
                     App.elements.debugLog.style.display = 'none';
