@@ -198,10 +198,56 @@ var App = {
             if (App.elements.debugLog) {
                 App.elements.debugLog.style.display = 'block'; // Make debug log visible
 
+                // Log the technical error
                 var debugMessage = document.createElement('p');
                 var timestamp = new Date().toLocaleTimeString();
                 debugMessage.textContent = `[${timestamp}] ERROR en '${step}' (${url}): ${error.message || error.toString()}`;
                 App.elements.debugLog.appendChild(debugMessage);
+
+                // --- Handle "Servicio de hora no disponible" and Theme Toggle ---
+                // Only if it's the solar step error (functional error)
+                if (step === 'solares') {
+                    // Clear sunInfo
+                    App.elements.sunInfo.innerHTML = '';
+
+                    // Create and append functional error message
+                    var functionalError = document.createElement('p');
+                    functionalError.textContent = `[${timestamp}] ERROR FUNCIONAL: Servicio de hora no disponible.`;
+                    functionalError.style.color = '#c1121f'; // Highlight functional error
+                    App.elements.debugLog.appendChild(functionalError);
+
+                    // Create and append theme toggle switch
+                    var themeToggleContainer = document.createElement('div');
+                    themeToggleContainer.style.display = 'flex';
+                    themeToggleContainer.style.alignItems = 'center';
+                    themeToggleContainer.style.marginTop = '10px';
+                    themeToggleContainer.style.marginBottom = '10px'; // Spacing in debug log
+
+                    var labelText = document.createElement('span');
+                    labelText.textContent = 'Modo Oscuro';
+                    labelText.style.color = 'white'; // Ensure visibility in debug log
+                    themeToggleContainer.appendChild(labelText);
+
+                    var switchLabel = document.createElement('label');
+                    switchLabel.className = 'switch';
+                    var switchInput = document.createElement('input');
+                    switchInput.type = 'checkbox';
+                    switchInput.id = 'theme-toggle-switch';
+                    switchInput.checked = App.elements.body.classList.contains('dark-mode'); // Reflect current theme
+                    var switchSlider = document.createElement('span');
+                    switchSlider.className = 'slider';
+
+                    switchLabel.appendChild(switchInput);
+                    switchLabel.appendChild(switchSlider);
+                    themeToggleContainer.appendChild(switchLabel);
+
+                    switchInput.addEventListener('change', function(e) {
+                        e.stopPropagation();
+                        App.theme.set(switchInput.checked);
+                    });
+                    App.elements.debugLog.appendChild(themeToggleContainer);
+                }
+                // --- End "Servicio de hora no disponible" and Theme Toggle ---
 
                 // Limit debug log to prevent UI clutter
                 while (App.elements.debugLog.children.length > 10) {
@@ -209,38 +255,10 @@ var App = {
                 }
             }
 
+            // Still set theme based on preference if functional error occurred
             App.theme.set(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            App.elements.sunInfo.innerHTML = 'Servicio de hora no disponible.';
-            if (App.elements.sunInfo) { // Ensure sunInfo exists before appending
-                var themeToggleContainer = document.createElement('div');
-                themeToggleContainer.style.display = 'flex';
-                themeToggleContainer.style.alignItems = 'center';
-                themeToggleContainer.style.marginTop = '10px';
-
-                var labelText = document.createElement('span');
-                labelText.textContent = 'Modo Oscuro';
-                themeToggleContainer.appendChild(labelText);
-
-                var switchLabel = document.createElement('label');
-                switchLabel.className = 'switch';
-                var switchInput = document.createElement('input');
-                switchInput.type = 'checkbox';
-                switchInput.id = 'theme-toggle-switch';
-                switchInput.checked = App.elements.body.classList.contains('dark-mode'); // Reflect current theme
-                var switchSlider = document.createElement('span');
-                switchSlider.className = 'slider';
-
-                switchLabel.appendChild(switchInput);
-                switchLabel.appendChild(switchSlider);
-                themeToggleContainer.appendChild(switchLabel);
-                
-                switchInput.addEventListener('change', function(e) {
-                    e.stopPropagation(); // Prevent event from bubbling up to dashboard and triggering fullscreen
-                    App.theme.set(switchInput.checked);
-                });
-                App.elements.sunInfo.appendChild(themeToggleContainer);
-            }
-            App.elements.sunInfo.style.opacity = 1;
+            // This opacity makes sunInfo disappear once error occurs, which is desired as its content moved to debug log
+            App.elements.sunInfo.style.opacity = 0;
         }
     },
 

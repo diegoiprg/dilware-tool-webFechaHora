@@ -207,11 +207,11 @@ body:not(.dark-mode) .day-name .content { color: #6C757D; }
 
 /* --- Action Button Styling --- */
 .action-button {
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark */
+    /* Semi-transparent dark */
     color: #E2E8F0;
     border: none;
     border-radius: 5px;
-    padding: 8px 12px;
+    padding: 5px 8px; /* Adjusted padding for switch container */
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -220,7 +220,7 @@ body:not(.dark-mode) .day-name .content { color: #6C757D; }
 }
 
 .action-button:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
 }
 
 .action-button.top-right {
