@@ -37,7 +37,7 @@ var App = {
             .catch(e => {
                 if (App.elements.debugLog) {
                     var msg = document.createElement('p');
-                    var timestamp = new Date().toLocaleTimeString();
+                    var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                     msg.textContent = `[${timestamp}] ERROR al cargar SVG ${url}: ${e.message}`;
                     msg.style.color = 'white';
                     msg.style.fontWeight = 'bold';
@@ -89,13 +89,13 @@ var App = {
             gtag('event', eventName, eventParams);
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] GA4 Event: ${eventName} - ${JSON.stringify(eventParams)}`;
                 App.elements.debugLog.appendChild(msg);
             }
         } else if (App.elements.debugLog) {
             var msg = document.createElement('p');
-            var timestamp = new Date().toLocaleTimeString();
+            var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
             msg.textContent = `[${timestamp}] GA4 Event Not Sent (gtag not available): ${eventName} - ${JSON.stringify(eventParams)}`;
             msg.style.color = 'orange';
             App.elements.debugLog.appendChild(msg);
@@ -111,13 +111,13 @@ var App = {
             });
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] GA4 Screen View: ${title} (${path})`;
                 App.elements.debugLog.appendChild(msg);
             }
         } else if (App.elements.debugLog) {
             var msg = document.createElement('p');
-            var timestamp = new Date().toLocaleTimeString();
+            var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
             msg.textContent = `[${timestamp}] GA4 Screen View Not Sent (gtag not available): ${title} (${path})`;
             msg.style.color = 'orange';
             App.elements.debugLog.appendChild(msg);
@@ -128,7 +128,7 @@ var App = {
         start: function() {
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.clock.start() iniciado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -138,7 +138,7 @@ var App = {
             } catch (e) {
                 if (App.elements.debugLog) {
                     var msg = document.createElement('p');
-                    var timestamp = new Date().toLocaleTimeString();
+                    var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.clock.start(): ${e.message || e.toString()}`;
                     msg.style.color = 'red';
                     App.elements.debugLog.appendChild(msg);
@@ -147,7 +147,7 @@ var App = {
             }
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.clock.start() finalizado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -165,7 +165,7 @@ var App = {
             App.trackPageView('/calendar', 'Calendar View');
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.calendar.render() iniciado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -207,7 +207,7 @@ var App = {
             } catch (e) {
                 if (App.elements.debugLog) {
                     var msg = document.createElement('p');
-                    var timestamp = new Date().toLocaleTimeString();
+                    var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.calendar.render(): ${e.message || e.toString()}`;
                     msg.style.color = 'red';
                     App.elements.debugLog.appendChild(msg);
@@ -216,7 +216,7 @@ var App = {
             }
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.calendar.render() finalizado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -269,7 +269,7 @@ var App = {
         init: function() {
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.theme.init() iniciado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -337,7 +337,7 @@ var App = {
             } catch (e) {
                 if (App.elements.debugLog) {
                     var msg = document.createElement('p');
-                    var timestamp = new Date().toLocaleTimeString();
+                    var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.theme.init(): ${e.message || e.toString()}`;
                     msg.style.color = 'white';
                     msg.style.fontWeight = 'bold';
@@ -349,7 +349,7 @@ var App = {
             }
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.theme.init() finalizado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -394,7 +394,7 @@ var App = {
             if (App.elements.debugLog) {
                 // Log the technical error
                 var debugMessage = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 debugMessage.textContent = `[${timestamp}] ERROR en '${step}' (${url}): ${error.message || error.toString()}`;
                 debugMessage.style.color = 'white';
                 debugMessage.style.fontWeight = 'bold';
@@ -416,7 +416,7 @@ var App = {
         init: function() {
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.fullscreen.init() iniciado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -436,7 +436,7 @@ var App = {
             } catch (e) {
                 if (App.elements.debugLog) {
                     var msg = document.createElement('p');
-                    var timestamp = new Date().toLocaleTimeString();
+                    var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.fullscreen.init(): ${e.message || e.toString()}`;
                     msg.style.color = 'white';
                     msg.style.fontWeight = 'bold';
@@ -446,7 +446,7 @@ var App = {
             }
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.fullscreen.init() finalizado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -466,7 +466,7 @@ var App = {
 
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] Intentando entrar en fullscreen.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -477,7 +477,7 @@ var App = {
 
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] Intentando salir de fullscreen.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -502,7 +502,7 @@ var App = {
         init: function() {
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.antiBurnIn.init() iniciado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -514,7 +514,7 @@ var App = {
             } catch (e) {
                 if (App.elements.debugLog) {
                     var msg = document.createElement('p');
-                    var timestamp = new Date().toLocaleTimeString();
+                    var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.antiBurnIn.init(): ${e.message || e.toString()}`;
                     msg.style.color = 'white';
                     msg.style.fontWeight = 'bold';
@@ -524,7 +524,7 @@ var App = {
             }
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] App.antiBurnIn.init() finalizado.`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -551,7 +551,7 @@ var App = {
 
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] Anti-burn-in shift: X=${newShiftX.toFixed(2)}px, Y=${newShiftY.toFixed(2)}px`;
                 App.elements.debugLog.appendChild(msg);
             }
@@ -563,7 +563,7 @@ var App = {
             // Ensure debug log is hidden by default, before any other logic or messages
             App.elements.debugLog.style.display = 'none';
             var msg = document.createElement('p');
-            var timestamp = new Date().toLocaleTimeString();
+            var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
             msg.textContent = `[${timestamp}] App.init() iniciado.`;
             App.elements.debugLog.appendChild(msg);
         }
@@ -635,7 +635,7 @@ var App = {
                         .then(registration => {
                             if (App.elements.debugLog) {
                                 var msg = document.createElement('p');
-                                var timestamp = new Date().toLocaleTimeString();
+                                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                                 msg.textContent = `[${timestamp}] ServiceWorker registrado con éxito. Scope: ${registration.scope}`;
                                 App.elements.debugLog.appendChild(msg);
                             }
@@ -643,7 +643,7 @@ var App = {
                         .catch(error => {
                             if (App.elements.debugLog) {
                                 var msg = document.createElement('p');
-                                var timestamp = new Date().toLocaleTimeString();
+                                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                                 msg.textContent = `[${timestamp}] Fallo el registro del ServiceWorker: ${error}`;
                                 msg.style.color = 'white';
                                 msg.style.fontWeight = 'bold';
@@ -655,7 +655,7 @@ var App = {
             } else {
                 if (App.elements.debugLog) {
                     var msg = document.createElement('p');
-                    var timestamp = new Date().toLocaleTimeString();
+                    var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                     msg.textContent = `[${timestamp}] ServiceWorkers no soportados por este navegador.`;
                     msg.style.color = 'white'; // Informational, no bold
                     App.elements.debugLog.appendChild(msg);
@@ -664,7 +664,7 @@ var App = {
         } catch (e) {
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString();
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.init(): ${e.message || e.toString()}`;
                 msg.style.color = 'white';
                 msg.style.fontWeight = 'bold';
@@ -674,7 +674,7 @@ var App = {
         }
         if (App.elements.debugLog) {
             var msg = document.createElement('p');
-            var timestamp = new Date().toLocaleTimeString();
+            var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
             msg.textContent = `[${timestamp}] App.init() finalizado.`;
             App.elements.debugLog.appendChild(msg);
         }
