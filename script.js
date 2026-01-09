@@ -451,8 +451,8 @@ var App = {
             try {
                 // Initial shift
                 this.shiftElements();
-                // Shift every 5 minutes (300000 ms)
-                setInterval(this.shiftElements.bind(this), 300000);
+                // Shift every 5 seconds (5000 ms) for testing
+                setInterval(this.shiftElements.bind(this), 5000);
             } catch (e) {
                 if (App.elements.debugLog) {
                     var msg = document.createElement('p');
@@ -471,9 +471,9 @@ var App = {
             }
         },
         shiftElements: function() {
-            // Define max shift range (e.g., +/- 0.5% of viewport width/height)
-            const maxShiftX = window.innerWidth * 0.005;
-            const maxShiftY = window.innerHeight * 0.005;
+            // Define max shift range (e.g., +/- 5% of viewport width/height) for testing
+            const maxShiftX = window.innerWidth * 0.05;
+            const maxShiftY = window.innerHeight * 0.05;
 
             // Generate new shift values within the range, but different from current
             let newShiftX, newShiftY;
