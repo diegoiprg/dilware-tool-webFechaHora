@@ -1,0 +1,199 @@
+/*
+  Hoja de estilos final.
+  Versión 14: Ajustes finales de UI/UX.
+  - Mayor tamaño para la info de amanecer/atardecer.
+  - Cursor más claro para elementos no interactivos.
+  - Feedback visual al tocar el área del reloj.
+*/
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #F8F9FA;
+    color: #212529;
+    display: flex;
+    padding: 1vmin;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+body.dark-mode {
+    background-color: #1A202C;
+    color: #E2E8F0;
+}
+
+/* Animación de fundido para el calendario */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    cursor: pointer; /* El fondo general activa la pantalla completa */
+}
+
+.widget {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2vmin;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    flex: 1 1 0%;
+}
+
+@media (orientation: portrait) {
+    .dashboard-container { flex-direction: column; }
+    #calendar-container { height: 55%; flex: none; }
+    #clock-container { height: 45%; flex: none; }
+}
+
+/* --- Reloj y Amanecer/Atardecer --- */
+#clock-container {
+    transition: transform 0.1s ease; /* Feedback visual al tocar */
+}
+#clock-container:active {
+    transform: scale(0.99); /* Ligero encogimiento al tocar */
+}
+
+#clock-time {
+    font-variant-numeric: tabular-nums;
+    font-weight: 300;
+    line-height: 1;
+    color: #212529;
+    transition: color 0.5s ease;
+    pointer-events: none; /* Asegura que el click se registre en el contenedor clock-container */
+}
+body.dark-mode #clock-time { color: #E2E8F0; }
+
+#sun-info {
+    display: flex;
+    align-items: center;
+    font-size: 3.5vmin; /* Aún más grande */
+    font-weight: 500;
+    margin-top: 2.5vmin;
+    color: #6C757D;
+    opacity: 0;
+    letter-spacing: 0.05em;
+    transition: color 0.5s ease, opacity 0.5s ease;
+    pointer-events: none; /* Asegura que el click se registre en el dashboard */
+}
+#sun-info svg {
+    width: 3.8vmin; /* Ajustado al nuevo tamaño de fuente */
+    height: 3.8vmin;
+    margin-right: 1.5vmin;
+    fill: currentColor;
+}
+body.dark-mode #sun-info { color: #718096; }
+
+@media (orientation: landscape) {
+  #clock-time { font-size: 17vw; }
+}
+@media (orientation: portrait) {
+  #clock-time { font-size: 28vw; }
+}
+
+/* --- Calendario --- */
+#calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 2.5vmin;
+    font-size: 4vmin;
+    color: #6C757D;
+    transition: color 0.5s ease, max-width 0.5s ease;
+}
+body.dark-mode #calendar-header { color: #718096; }
+
+.calendar-title {
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    user-select: none;
+}
+.calendar-title:active { transform: scale(0.95); }
+
+.nav-arrow {
+    font-size: 6vmin;
+    font-weight: 300;
+    cursor: pointer;
+    padding: 1vmin 3vmin;
+    user-select: none;
+    border-radius: 8px;
+    transition: transform 0.1s ease, background-color 0.2s ease;
+}
+.nav-arrow:hover { background-color: rgba(128, 128, 128, 0.1); }
+.nav-arrow:active { transform: scale(0.9); }
+
+#calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 1.5vmin;
+    width: 100%;
+    max-width: 450px;
+    transition: max-width 0.5s ease;
+}
+
+.calendar-cell {
+    position: relative;
+    width: 100%;
+    font-size: 2.8vmin;
+    font-weight: 400;
+    cursor: default; /* Celdas de calendario no interactivas */
+}
+.calendar-cell:before { content: ''; display: block; padding-top: 100%; }
+.calendar-cell .content {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; justify-content: center; align-items: center;
+    transition: color 0.5s ease, background-color 0.5s ease;
+    pointer-events: none; /* Asegura que el click se registre en la celda/grid */
+}
+
+.day-name .content {
+    color: #94A3B8;
+    font-weight: 600;
+}
+body.dark-mode .day-name .content { color: #718096; }
+body:not(.dark-mode) .day-name .content { color: #6C757D; }
+
+.today .content {
+    background-color: #c1121f;
+    color: #FFFFFF;
+    font-weight: 700;
+    border-radius: 50%;
+}
+
+/* --- Estilos para pantallas grandes --- */
+@media (min-width: 768px) {
+    #calendar-header, #calendar-grid { max-width: 600px; grid-gap: 2vmin; }
+    #calendar-header { font-size: 26px; }
+    .nav-arrow { font-size: 36px; }
+    .calendar-cell { font-size: 18px; }
+    #sun-info { font-size: 24px; } /* Ajustado */
+    #sun-info svg { width: 25px; height: 25px; margin-right: 10px; } /* Ajustado */
+}
