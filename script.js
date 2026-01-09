@@ -49,8 +49,31 @@ var App = {
 
     clock: {
         start: function() {
-            this.update();
-            setInterval(this.update, 1000);
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.clock.start() iniciado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
+            try {
+                this.update();
+                setInterval(this.update, 1000);
+            } catch (e) {
+                if (App.elements.debugLog) {
+                    var msg = document.createElement('p');
+                    var timestamp = new Date().toLocaleTimeString();
+                    msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.clock.start(): ${e.message || e.toString()}`;
+                    msg.style.color = 'red';
+                    App.elements.debugLog.appendChild(msg);
+                    App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
+                }
+            }
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.clock.start() finalizado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
         },
         update: function() {
             var now = new Date();
@@ -62,40 +85,63 @@ var App = {
 
     calendar: {
         render: function() {
-            App.elements.calendarHeader.innerHTML = '';
-            App.elements.calendarGrid.innerHTML = '';
-            App.elements.calendarGrid.classList.remove('fade-in');
-
-            var year = App.state.displayedYear;
-            var month = App.state.displayedMonth;
-            var dateForHeader = new Date(year, month);
-            var monthName = dateForHeader.toLocaleDateString('es-ES', { month: 'long' });
-            var headerText = monthName.charAt(0).toUpperCase() + monthName.slice(1) + ' ' + year;
-            var prevArrow = this.createEl('div', 'nav-arrow', '‹');
-            var headerLabel = this.createEl('span', 'calendar-title', headerText);
-            var nextArrow = this.createEl('div', 'nav-arrow', '›');
-            prevArrow.addEventListener('click', function(e) { e.stopPropagation(); App.calendar.changeMonth(-1); });
-            nextArrow.addEventListener('click', function(e) { e.stopPropagation(); App.calendar.changeMonth(1); });
-            headerLabel.addEventListener('click', function(e) { e.stopPropagation(); App.calendar.returnToToday(); });
-            App.elements.calendarHeader.appendChild(prevArrow);
-            App.elements.calendarHeader.appendChild(headerLabel);
-            App.elements.calendarHeader.appendChild(nextArrow);
-
-            var daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-            daysOfWeek.forEach(function(day) { App.elements.calendarGrid.appendChild(App.calendar.createCell(day, ['day-name'])); });
-            
-            var firstDayOfMonth = new Date(year, month, 1).getDay();
-            for (var i = 0; i < firstDayOfMonth; i++) { this.createCell('', null, App.elements.calendarGrid); }
-            var daysInMonth = new Date(year, month + 1, 0).getDate();
-            for (var day = 1; day <= daysInMonth; day++) {
-                var classList = [];
-                var today = App.state.today;
-                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { classList.push('today'); }
-                this.createCell(day, classList, App.elements.calendarGrid);
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.calendar.render() iniciado.`;
+                App.elements.debugLog.appendChild(msg);
             }
-            // Forzar reflow para que la animación se ejecute
-            void App.elements.calendarGrid.offsetWidth;
-            App.elements.calendarGrid.classList.add('fade-in');
+            try {
+                App.elements.calendarHeader.innerHTML = '';
+                App.elements.calendarGrid.innerHTML = '';
+                App.elements.calendarGrid.classList.remove('fade-in');
+
+                var year = App.state.displayedYear;
+                var month = App.state.displayedMonth;
+                var dateForHeader = new Date(year, month);
+                var monthName = dateForHeader.toLocaleDateString('es-ES', { month: 'long' });
+                var headerText = monthName.charAt(0).toUpperCase() + monthName.slice(1) + ' ' + year;
+                var prevArrow = this.createEl('div', 'nav-arrow', '‹');
+                var headerLabel = this.createEl('span', 'calendar-title', headerText);
+                var nextArrow = this.createEl('div', 'nav-arrow', '›');
+                prevArrow.addEventListener('click', function(e) { e.stopPropagation(); App.calendar.changeMonth(-1); });
+                nextArrow.addEventListener('click', function(e) { e.stopPropagation(); App.calendar.changeMonth(1); });
+                headerLabel.addEventListener('click', function(e) { e.stopPropagation(); App.calendar.returnToToday(); });
+                App.elements.calendarHeader.appendChild(prevArrow);
+                App.elements.calendarHeader.appendChild(headerLabel);
+                App.elements.calendarHeader.appendChild(nextArrow);
+
+                var daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+                daysOfWeek.forEach(function(day) { App.elements.calendarGrid.appendChild(App.calendar.createCell(day, ['day-name'])); });
+                
+                var firstDayOfMonth = new Date(year, month, 1).getDay();
+                for (var i = 0; i < firstDayOfMonth; i++) { this.createCell('', null, App.elements.calendarGrid); }
+                var daysInMonth = new Date(year, month + 1, 0).getDate();
+                for (var day = 1; day <= daysInMonth; day++) {
+                    var classList = [];
+                    var today = App.state.today;
+                    if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { classList.push('today'); }
+                    this.createCell(day, classList, App.elements.calendarGrid);
+                }
+                // Forzar reflow para que la animación se ejecute
+                void App.elements.calendarGrid.offsetWidth;
+                App.elements.calendarGrid.classList.add('fade-in');
+            } catch (e) {
+                if (App.elements.debugLog) {
+                    var msg = document.createElement('p');
+                    var timestamp = new Date().toLocaleTimeString();
+                    msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.calendar.render(): ${e.message || e.toString()}`;
+                    msg.style.color = 'red';
+                    App.elements.debugLog.appendChild(msg);
+                    App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
+                }
+            }
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.calendar.render() finalizado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
         },
         createCell: function(text, classList, parent) {
             var cell = App.calendar.createEl('div', 'calendar-cell');
@@ -136,46 +182,70 @@ var App = {
     
     theme: {
         init: function() {
-            App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
-                                    
-            if ("geolocation" in navigator) {                            navigator.geolocation.getCurrentPosition(function(position) {
-                                var geo = {
-                                    latitude: position.coords.latitude,
-                                    longitude: position.coords.longitude
-                                };
-                                App.elements.sunInfo.innerHTML = 'Obteniendo datos solares...';
-                                var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.latitude +
-                                             '&longitude=' + geo.longitude + '&daily=sunrise,sunset&timezone=auto';
-                                App.makeApiRequest(apiUrl, function(sunData) {
-                                    function timeStringToMinutes(isoString) {
-                                        var timePart = isoString.split('T')[1];
-                                        var hours = parseInt(timePart.split(':')[0], 10);
-                                        var minutes = parseInt(timePart.split(':')[1], 10);
-                                        return (hours * 60) + minutes;
-                                    }
-                                    App.state.sunriseMinutes = timeStringToMinutes(sunData.daily.sunrise[0]);
-                                    App.state.sunsetMinutes = timeStringToMinutes(sunData.daily.sunset[0]);
-                                    App.theme.update();
-                                    setInterval(function() { App.theme.update(); }, 60000);
-                                }, function(error, url) { App.theme.onError(error, 'solares', url); });
-                                            }, function(error) {
-                                                var errorMessage = 'Error desconocido de Geolocation.';
-                                                switch (error.code) {
-                                                    case error.PERMISSION_DENIED:
-                                                        errorMessage = 'Permiso de ubicación denegado por el usuario.';
-                                                        break;
-                                                    case error.POSITION_UNAVAILABLE:
-                                                        errorMessage = 'Información de ubicación no disponible.';
-                                                        break;
-                                                    case error.TIMEOUT:
-                                                        errorMessage = 'La solicitud para obtener la ubicación ha caducado.';
-                                                        break;
-                                                }
-                                                App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
-                                            });
-                                        } else {
-                                            App.theme.onError(new Error('Geolocalización no soportada por el navegador.'), 'geolocation', 'navigator.geolocation');
-                                        }        },
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.theme.init() iniciado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
+            try {
+                App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
+                                        
+                if ("geolocation" in navigator) {                            navigator.geolocation.getCurrentPosition(function(position) {
+                                    var geo = {
+                                        latitude: position.coords.latitude,
+                                        longitude: position.coords.longitude
+                                    };
+                                    App.elements.sunInfo.innerHTML = 'Obteniendo datos solares...';
+                                    var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.latitude +
+                                                 '&longitude=' + geo.longitude + '&daily=sunrise,sunset&timezone=auto';
+                                    App.makeApiRequest(apiUrl, function(sunData) {
+                                        function timeStringToMinutes(isoString) {
+                                            var timePart = isoString.split('T')[1];
+                                            var hours = parseInt(timePart.split(':')[0], 10);
+                                            var minutes = parseInt(timePart.split(':')[1], 10);
+                                            return (hours * 60) + minutes;
+                                        }
+                                        App.state.sunriseMinutes = timeStringToMinutes(sunData.daily.sunrise[0]);
+                                        App.state.sunsetMinutes = timeStringToMinutes(sunData.daily.sunset[0]);
+                                        App.theme.update();
+                                        setInterval(function() { App.theme.update(); }, 60000);
+                                    }, function(error, url) { App.theme.onError(error, 'solares', url); });
+                                                }, function(error) {
+                                                    var errorMessage = 'Error desconocido de Geolocation.';
+                                                    switch (error.code) {
+                                                        case error.PERMISSION_DENIED:
+                                                            errorMessage = 'Permiso de ubicación denegado por el usuario.';
+                                                            break;
+                                                        case error.POSITION_UNAVAILABLE:
+                                                            errorMessage = 'Información de ubicación no disponible.';
+                                                            break;
+                                                        case error.TIMEOUT:
+                                                            errorMessage = 'La solicitud para obtener la ubicación ha caducado.';
+                                                            break;
+                                                    }
+                                                    App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
+                                                });
+                                            } else {
+                                                App.theme.onError(new Error('Geolocalización no soportada por el navegador.'), 'geolocation', 'navigator.geolocation');
+                                            }
+            } catch (e) {
+                if (App.elements.debugLog) {
+                    var msg = document.createElement('p');
+                    var timestamp = new Date().toLocaleTimeString();
+                    msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.theme.init(): ${e.message || e.toString()}`;
+                    msg.style.color = 'red';
+                    App.elements.debugLog.appendChild(msg);
+                    App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
+                }
+            }
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.theme.init() finalizado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
+        },
         update: function() {
             if (App.state.sunriseMinutes === null || App.state.sunsetMinutes === null) return;
             var now = new Date();
@@ -225,23 +295,40 @@ var App = {
 
     fullscreen: {
         init: function() {
-            if (App.elements.fullscreenToggleSwitchInput) {
-                // Add fullscreen change listeners once at init
-                document.addEventListener('fullscreenchange', App.fullscreen.updateSwitchState);
-                document.addEventListener('webkitfullscreenchange', App.fullscreen.updateSwitchState);
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.fullscreen.init() iniciado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
+            try {
+                if (App.elements.fullscreenToggleSwitchInput) {
+                    // Add fullscreen change listeners once at init
+                    document.addEventListener('fullscreenchange', App.fullscreen.updateSwitchState);
+                    document.addEventListener('webkitfullscreenchange', App.fullscreen.updateSwitchState);
 
-                // Load fullscreen state from localStorage
-                var isFullscreenOn = localStorage.getItem('fullscreenOn') === 'true';
-                App.elements.fullscreenToggleSwitchInput.checked = isFullscreenOn;
+                    // Load fullscreen state from localStorage
+                    var isFullscreenOn = localStorage.getItem('fullscreenOn') === 'true';
+                    App.elements.fullscreenToggleSwitchInput.checked = isFullscreenOn;
 
-                // Set up event listener for the switch
-                App.elements.fullscreenToggleSwitchInput.addEventListener('change', App.fullscreen.handleSwitchChange);
-
-                // Try to enter fullscreen on init if it was on (browser may require user gesture)
-                // This initial call is not always guaranteed to work without a direct user gesture
-                if (isFullscreenOn) {
-                    App.fullscreen.enterFullscreen();
+                    // Set up event listener for the switch
+                    App.elements.fullscreenToggleSwitchInput.addEventListener('change', App.fullscreen.handleSwitchChange);
                 }
+            } catch (e) {
+                if (App.elements.debugLog) {
+                    var msg = document.createElement('p');
+                    var timestamp = new Date().toLocaleTimeString();
+                    msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.fullscreen.init(): ${e.message || e.toString()}`;
+                    msg.style.color = 'red';
+                    App.elements.debugLog.appendChild(msg);
+                    App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
+                }
+            }
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.fullscreen.init() finalizado.`;
+                App.elements.debugLog.appendChild(msg);
             }
         },
         handleSwitchChange: function() {
@@ -290,41 +377,68 @@ var App = {
     },
 
     init: function() {
-        this.clock.start();
-        this.calendar.render();
-        this.calendar.scheduleDailyUpdate();
-
-        // Load theme state from localStorage on init, controlled by switch
-        var isDarkModeOn = localStorage.getItem('darkModeOn');
-        if (isDarkModeOn === null) { // If no saved state, use system preference
-            isDarkModeOn = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        } else {
-            isDarkModeOn = (isDarkModeOn === 'true');
+        if (App.elements.debugLog) {
+            var msg = document.createElement('p');
+            var timestamp = new Date().toLocaleTimeString();
+            msg.textContent = `[${timestamp}] App.init() iniciado.`;
+            App.elements.debugLog.appendChild(msg);
         }
-        App.theme.set(isDarkModeOn);
+        try {
+            this.clock.start();
+            this.calendar.render();
+            this.calendar.scheduleDailyUpdate();
 
-        if (App.elements.darkModeToggleSwitchInput) {
-            App.elements.darkModeToggleSwitchInput.checked = isDarkModeOn; // Set switch state
-            App.elements.darkModeToggleSwitchInput.addEventListener('change', function() {
-                var isChecked = App.elements.darkModeToggleSwitchInput.checked;
-                App.theme.set(isChecked);
-                localStorage.setItem('darkModeOn', isChecked); // Save state
-            });
+            // Load theme state from localStorage on init, controlled by switch
+            var isDarkModeOn = localStorage.getItem('darkModeOn');
+            if (isDarkModeOn === null) { // If no saved state, use system preference
+                isDarkModeOn = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            } else {
+                isDarkModeOn = (isDarkModeOn === 'true');
+            }
+            App.theme.set(isDarkModeOn);
+
+            if (App.elements.darkModeToggleSwitchInput) {
+                App.elements.darkModeToggleSwitchInput.checked = isDarkModeOn; // Set switch state
+                App.elements.darkModeToggleSwitchInput.addEventListener('change', function() {
+                    var isChecked = App.elements.darkModeToggleSwitchInput.checked;
+                    App.theme.set(isChecked);
+                    localStorage.setItem('darkModeOn', isChecked); // Save state
+                });
+            }
+            
+            this.theme.init(); // This now mainly calls APIs and updates sun info, not initial theme
+
+            if (App.elements.debugToggleSwitchInput && App.elements.debugLog) {
+                // Load debug log state from localStorage
+                var isDebugLogOn = localStorage.getItem('debugLogOn') === 'true';
+                App.elements.debugToggleSwitchInput.checked = isDebugLogOn;
+                App.elements.debugLog.style.display = isDebugLogOn ? 'block' : 'none';
+
+                App.elements.debugToggleSwitchInput.addEventListener('change', function() {
+                    var isChecked = App.elements.debugToggleSwitchInput.checked;
+                    localStorage.setItem('debugLogOn', isChecked);
+                    App.elements.debugLog.style.display = isChecked ? 'block' : 'none';
+                });
+            }
+
+            if (App.elements.fullscreenToggleSwitchInput) {
+                App.fullscreen.init(); // Initialize fullscreen logic
+            }
+        } catch (e) {
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.init(): ${e.message || e.toString()}`;
+                msg.style.color = 'red';
+                App.elements.debugLog.appendChild(msg);
+                App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
+            }
         }
-        
-        this.theme.init(); // This now mainly calls APIs and updates sun info, not initial theme
-
-        if (App.elements.debugToggleSwitchInput && App.elements.debugLog) {
-            // Load debug log state from localStorage
-            var isDebugLogOn = localStorage.getItem('debugLogOn') === 'true';
-            App.elements.debugToggleSwitchInput.checked = isDebugLogOn;
-            App.elements.debugLog.style.display = isDebugLogOn ? 'block' : 'none';
-
-            App.elements.debugToggleSwitchInput.addEventListener('change', function() {
-                var isChecked = App.elements.debugToggleSwitchInput.checked;
-                localStorage.setItem('debugLogOn', isChecked);
-                App.elements.debugLog.style.display = isChecked ? 'block' : 'none';
-            });
+        if (App.elements.debugLog) {
+            var msg = document.createElement('p');
+            var timestamp = new Date().toLocaleTimeString();
+            msg.textContent = `[${timestamp}] App.init() finalizado.`;
+            App.elements.debugLog.appendChild(msg);
         }
     }
 };
