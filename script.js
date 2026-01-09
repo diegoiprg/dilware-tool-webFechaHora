@@ -11,6 +11,7 @@ var App = {
         calendarHeader: document.getElementById('calendar-header'),
         calendarGrid: document.getElementById('calendar-grid'),
         debugLog: document.getElementById('debug-log'),
+        debugToggleButton: document.getElementById('debug-toggle-button'),
     },
 
     // Iconos SVG para sol y luna. Son limpios, escalables y heredan el color.
@@ -210,6 +211,16 @@ var App = {
 
             App.theme.set(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
             App.elements.sunInfo.innerHTML = 'Servicio de hora no disponible.';
+            if (App.elements.sunInfo) { // Ensure sunInfo exists before appending
+                var toggleThemeButton = document.createElement('button');
+                toggleThemeButton.textContent = 'Alternar Tema';
+                toggleThemeButton.style.marginTop = '10px'; // Add some spacing
+                toggleThemeButton.addEventListener('click', function() {
+                    var isDark = App.elements.body.classList.contains('dark-mode');
+                    App.theme.set(!isDark);
+                });
+                App.elements.sunInfo.appendChild(toggleThemeButton);
+            }
             App.elements.sunInfo.style.opacity = 1;
         }
     },
@@ -246,6 +257,17 @@ var App = {
         this.calendar.scheduleDailyUpdate();
         this.theme.init();
         this.fullscreen.init();
+
+        if (App.elements.debugToggleButton && App.elements.debugLog) {
+            App.elements.debugToggleButton.style.display = 'block'; // Make button visible
+            App.elements.debugToggleButton.addEventListener('click', function() {
+                if (App.elements.debugLog.style.display === 'none') {
+                    App.elements.debugLog.style.display = 'block';
+                } else {
+                    App.elements.debugLog.style.display = 'none';
+                }
+            });
+        }
     }
 };
 
