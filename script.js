@@ -236,12 +236,27 @@ var App = {
 
                 // Set up event listener for the switch
                 App.elements.fullscreenToggleSwitchInput.addEventListener('change', App.fullscreen.handleSwitchChange);
+
+                // Try to enter fullscreen on init if it was on (browser may require user gesture)
+                // This initial call is not always guaranteed to work without a direct user gesture
+                if (isFullscreenOn) {
+                    App.fullscreen.enterFullscreen();
+                }
+            }
+        },
+        handleSwitchChange: function() {
+            var isChecked = App.elements.fullscreenToggleSwitchInput.checked;
+            if (isChecked) {
+                App.fullscreen.enterFullscreen();
+            } else {
+                App.fullscreen.exitFullscreen();
             }
         },
         enterFullscreen: function() {
             var el = document.documentElement;
             if (el.requestFullscreen) el.requestFullscreen();
             else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
                 var timestamp = new Date().toLocaleTimeString();
@@ -252,6 +267,7 @@ var App = {
         exitFullscreen: function() {
             if (document.exitFullscreen) document.exitFullscreen();
             else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
                 var timestamp = new Date().toLocaleTimeString();
@@ -263,17 +279,12 @@ var App = {
             if (App.elements.fullscreenToggleSwitchInput) {
                 var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
                 var isCurrentlyFullscreen = (fsEl !== null);
+
                 // Update switch state only if it differs from current fullscreen state
                 if (App.elements.fullscreenToggleSwitchInput.checked !== isCurrentlyFullscreen) {
                     App.elements.fullscreenToggleSwitchInput.checked = isCurrentlyFullscreen;
                 }
                 localStorage.setItem('fullscreenOn', isCurrentlyFullscreen);
-            }
-        }
-            if (App.elements.fullscreenToggleSwitchInput) {
-                var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
-                App.elements.fullscreenToggleSwitchInput.checked = (fsEl !== null);
-                localStorage.setItem('fullscreenOn', (fsEl !== null));
             }
         }
     },
