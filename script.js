@@ -212,14 +212,32 @@ var App = {
             App.theme.set(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
             App.elements.sunInfo.innerHTML = 'Servicio de hora no disponible.';
             if (App.elements.sunInfo) { // Ensure sunInfo exists before appending
-                var toggleThemeButton = document.createElement('button');
-                toggleThemeButton.textContent = 'Alternar Tema';
-                toggleThemeButton.style.marginTop = '10px'; // Add some spacing
-                toggleThemeButton.addEventListener('click', function() {
-                    var isDark = App.elements.body.classList.contains('dark-mode');
-                    App.theme.set(!isDark);
+                var themeToggleContainer = document.createElement('div');
+                themeToggleContainer.style.display = 'flex';
+                themeToggleContainer.style.alignItems = 'center';
+                themeToggleContainer.style.marginTop = '10px';
+
+                var labelText = document.createElement('span');
+                labelText.textContent = 'Modo Oscuro';
+                themeToggleContainer.appendChild(labelText);
+
+                var switchLabel = document.createElement('label');
+                switchLabel.className = 'switch';
+                var switchInput = document.createElement('input');
+                switchInput.type = 'checkbox';
+                switchInput.id = 'theme-toggle-switch';
+                switchInput.checked = App.elements.body.classList.contains('dark-mode'); // Reflect current theme
+                var switchSlider = document.createElement('span');
+                switchSlider.className = 'slider';
+
+                switchLabel.appendChild(switchInput);
+                switchLabel.appendChild(switchSlider);
+                themeToggleContainer.appendChild(switchLabel);
+                
+                switchInput.addEventListener('change', function() {
+                    App.theme.set(switchInput.checked);
                 });
-                App.elements.sunInfo.appendChild(toggleThemeButton);
+                App.elements.sunInfo.appendChild(themeToggleContainer);
             }
             App.elements.sunInfo.style.opacity = 1;
         }

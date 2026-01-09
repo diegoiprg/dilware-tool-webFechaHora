@@ -195,5 +195,95 @@ body:not(.dark-mode) .day-name .content { color: #6C757D; }
     .nav-arrow { font-size: 36px; }
     .calendar-cell { font-size: 18px; }
     #sun-info { font-size: 24px; } /* Ajustado */
+/* --- Estilos para pantallas grandes --- */
+@media (min-width: 768px) {
+    #calendar-header, #calendar-grid { max-width: 600px; grid-gap: 2vmin; }
+    #calendar-header { font-size: 26px; }
+    .nav-arrow { font-size: 36px; }
+    .calendar-cell { font-size: 18px; }
+    #sun-info { font-size: 24px; } /* Ajustado */
     #sun-info svg { width: 25px; height: 25px; margin-right: 10px; } /* Ajustado */
 }
+
+/* --- Action Button Styling --- */
+.action-button {
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark */
+    color: #E2E8F0;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    z-index: 1001;
+    position: fixed; /* Keep it fixed for top-right positioning */
+}
+
+.action-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.action-button.top-right {
+    top: 10px;
+    right: 10px;
+}
+
+/* --- Toggle Switch Styling --- */
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px; /* Smaller width */
+    height: 20px; /* Smaller height */
+    margin-left: 10px; /* Spacing from text/other elements */
+    vertical-align: middle; /* Align with text */
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 20px; /* Rounder slider */
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px; /* Smaller thumb */
+    width: 16px; /* Smaller thumb */
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%; /* Round thumb */
+}
+
+input:checked + .slider {
+    background-color: #c1121f; /* Theme accent color */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #c1121f;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(20px); /* Move thumb to right */
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
