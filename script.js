@@ -133,20 +133,10 @@ var App = {
     
     theme: {
         init: function() {
-                                    App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
-                                    App.elements.sunInfo.style.opacity = 1;
-                        
-                                    if (App.elements.debugLog) {
-                                        var msg = document.createElement('p');
-                                        msg.textContent = `[${new Date().toLocaleTimeString()}] Iniciando proceso de geolocalización...`;
-                                        App.elements.debugLog.appendChild(msg);
-                                        // Limit debug log to prevent UI clutter
-                                        while (App.elements.debugLog.children.length > 10) {
-                                            App.elements.debugLog.removeChild(App.elements.debugLog.firstChild);
-                                        }
-                                    }
-                        
-                                    if ("geolocation" in navigator) {                            navigator.geolocation.getCurrentPosition(function(position) {
+                                                App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
+                                                App.elements.sunInfo.style.opacity = 1;
+                                    
+                                                if ("geolocation" in navigator) {                            navigator.geolocation.getCurrentPosition(function(position) {
                                 var geo = {
                                     latitude: position.coords.latitude,
                                     longitude: position.coords.longitude
@@ -204,14 +194,18 @@ var App = {
         onError: function(error, step, url) {
             console.error("Fallo en el paso '" + step + "' (" + url + "):", error);
 
-            var debugMessage = document.createElement('p');
-            var timestamp = new Date().toLocaleTimeString();
-            debugMessage.textContent = `[${timestamp}] ERROR en '${step}' (${url}): ${error.message || error.toString()}`;
-            App.elements.debugLog.appendChild(debugMessage);
+            if (App.elements.debugLog) {
+                App.elements.debugLog.style.display = 'block'; // Make debug log visible
 
-            // Limit debug log to prevent UI clutter
-            while (App.elements.debugLog.children.length > 10) {
-                App.elements.debugLog.removeChild(App.elements.debugLog.firstChild);
+                var debugMessage = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                debugMessage.textContent = `[${timestamp}] ERROR en '${step}' (${url}): ${error.message || error.toString()}`;
+                App.elements.debugLog.appendChild(debugMessage);
+
+                // Limit debug log to prevent UI clutter
+                while (App.elements.debugLog.children.length > 10) {
+                    App.elements.debugLog.removeChild(App.elements.debugLog.firstChild);
+                }
             }
 
             App.theme.set(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -247,11 +241,6 @@ var App = {
     },
 
     init: function() {
-        if (App.elements.debugLog) {
-            var msg = document.createElement('p');
-            msg.textContent = `[${new Date().toLocaleTimeString()}] Debug log inicializado.`;
-            App.elements.debugLog.appendChild(msg);
-        }
         this.clock.start();
         this.calendar.render();
         this.calendar.scheduleDailyUpdate();
