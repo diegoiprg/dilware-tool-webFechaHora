@@ -39,7 +39,8 @@ var App = {
                     var msg = document.createElement('p');
                     var timestamp = new Date().toLocaleTimeString();
                     msg.textContent = `[${timestamp}] ERROR al cargar SVG ${url}: ${e.message}`;
-                    msg.style.color = 'red';
+                    msg.style.color = 'white';
+                    msg.style.fontWeight = 'bold';
                     App.elements.debugLog.appendChild(msg);
                     App.elements.debugLog.style.display = 'block';
                 }
@@ -338,7 +339,8 @@ var App = {
                     var msg = document.createElement('p');
                     var timestamp = new Date().toLocaleTimeString();
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.theme.init(): ${e.message || e.toString()}`;
-                    msg.style.color = 'red';
+                    msg.style.color = 'white';
+                    msg.style.fontWeight = 'bold';
                     App.elements.debugLog.appendChild(msg);
                     App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
                 }
@@ -394,7 +396,8 @@ var App = {
                 var debugMessage = document.createElement('p');
                 var timestamp = new Date().toLocaleTimeString();
                 debugMessage.textContent = `[${timestamp}] ERROR en '${step}' (${url}): ${error.message || error.toString()}`;
-                debugMessage.style.color = 'red';
+                debugMessage.style.color = 'white';
+                debugMessage.style.fontWeight = 'bold';
                 App.elements.debugLog.appendChild(debugMessage);
 
                 // Limit debug log to prevent UI clutter
@@ -435,7 +438,8 @@ var App = {
                     var msg = document.createElement('p');
                     var timestamp = new Date().toLocaleTimeString();
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.fullscreen.init(): ${e.message || e.toString()}`;
-                    msg.style.color = 'red';
+                    msg.style.color = 'white';
+                    msg.style.fontWeight = 'bold';
                     App.elements.debugLog.appendChild(msg);
                     App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
                 }
@@ -512,7 +516,8 @@ var App = {
                     var msg = document.createElement('p');
                     var timestamp = new Date().toLocaleTimeString();
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.antiBurnIn.init(): ${e.message || e.toString()}`;
-                    msg.style.color = 'red';
+                    msg.style.color = 'white';
+                    msg.style.fontWeight = 'bold';
                     App.elements.debugLog.appendChild(msg);
                     App.elements.debugLog.style.display = 'block';
                 }
@@ -555,6 +560,8 @@ var App = {
 
     init: function() {
         if (App.elements.debugLog) {
+            // Ensure debug log is hidden by default, before any other logic or messages
+            App.elements.debugLog.style.display = 'none';
             var msg = document.createElement('p');
             var timestamp = new Date().toLocaleTimeString();
             msg.textContent = `[${timestamp}] App.init() iniciado.`;
@@ -624,7 +631,7 @@ var App = {
             // Register Service Worker for offline support
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/service-worker.js')
+                    navigator.serviceWorker.register('./service-worker.js')
                         .then(registration => {
                             if (App.elements.debugLog) {
                                 var msg = document.createElement('p');
@@ -638,7 +645,8 @@ var App = {
                                 var msg = document.createElement('p');
                                 var timestamp = new Date().toLocaleTimeString();
                                 msg.textContent = `[${timestamp}] Fallo el registro del ServiceWorker: ${error}`;
-                                msg.style.color = 'red';
+                                msg.style.color = 'white';
+                                msg.style.fontWeight = 'bold';
                                 App.elements.debugLog.appendChild(msg);
                                 App.elements.debugLog.style.display = 'block';
                             }
@@ -649,7 +657,7 @@ var App = {
                     var msg = document.createElement('p');
                     var timestamp = new Date().toLocaleTimeString();
                     msg.textContent = `[${timestamp}] ServiceWorkers no soportados por este navegador.`;
-                    msg.style.color = 'orange';
+                    msg.style.color = 'white'; // Informational, no bold
                     App.elements.debugLog.appendChild(msg);
                 }
             }
@@ -658,7 +666,8 @@ var App = {
                 var msg = document.createElement('p');
                 var timestamp = new Date().toLocaleTimeString();
                 msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.init(): ${e.message || e.toString()}`;
-                msg.style.color = 'red';
+                msg.style.color = 'white';
+                msg.style.fontWeight = 'bold';
                 App.elements.debugLog.appendChild(msg);
                 App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
             }
