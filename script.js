@@ -12,6 +12,7 @@ var App = {
         calendarGrid: document.getElementById('calendar-grid'),
         debugLog: document.getElementById('debug-log'),
         debugToggleSwitchInput: document.getElementById('debug-toggle-switch'),
+        darkModeToggleSwitchInput: document.getElementById('dark-mode-toggle-switch'),
     },
 
     // Iconos SVG para sol y luna. Son limpios, escalables y heredan el color.
@@ -191,63 +192,25 @@ var App = {
         set: function(isDark) {
             if (isDark) App.elements.body.classList.add('dark-mode');
             else App.elements.body.classList.remove('dark-mode');
+            localStorage.setItem('darkModeOn', isDark); // Save state
         },
         onError: function(error, step, url) {
             console.error("Fallo en el paso '" + step + "' (" + url + "):", error);
 
             if (App.elements.debugLog) {
-                App.elements.debugLog.style.display = 'block'; // Make debug log visible
-
                 // Log the technical error
                 var debugMessage = document.createElement('p');
                 var timestamp = new Date().toLocaleTimeString();
                 debugMessage.textContent = `[${timestamp}] ERROR en '${step}' (${url}): ${error.message || error.toString()}`;
                 App.elements.debugLog.appendChild(debugMessage);
 
-                // --- Handle "Servicio de hora no disponible" and Theme Toggle ---
-                // Only if it's the solar step error (functional error)
+                // Log functional error for 'solares' step
                 if (step === 'solares') {
-                    // Clear sunInfo
-                    App.elements.sunInfo.innerHTML = '';
-
-                    // Create and append functional error message
-                    var functionalError = document.createElement('p');
-                    functionalError.textContent = `[${timestamp}] ERROR FUNCIONAL: Servicio de hora no disponible.`;
-                    functionalError.style.color = '#c1121f'; // Highlight functional error
-                    App.elements.debugLog.appendChild(functionalError);
-
-                    // Create and append theme toggle switch
-                    var themeToggleContainer = document.createElement('div');
-                    themeToggleContainer.style.display = 'flex';
-                    themeToggleContainer.style.alignItems = 'center';
-                    themeToggleContainer.style.marginTop = '10px';
-                    themeToggleContainer.style.marginBottom = '10px'; // Spacing in debug log
-
-                    var labelText = document.createElement('span');
-                    labelText.textContent = 'Modo Oscuro';
-                    labelText.style.color = 'white'; // Ensure visibility in debug log
-                    themeToggleContainer.appendChild(labelText);
-
-                    var switchLabel = document.createElement('label');
-                    switchLabel.className = 'switch';
-                    var switchInput = document.createElement('input');
-                    switchInput.type = 'checkbox';
-                    switchInput.id = 'theme-toggle-switch';
-                    switchInput.checked = App.elements.body.classList.contains('dark-mode'); // Reflect current theme
-                    var switchSlider = document.createElement('span');
-                    switchSlider.className = 'slider';
-
-                    switchLabel.appendChild(switchInput);
-                    switchLabel.appendChild(switchSlider);
-                    themeToggleContainer.appendChild(switchLabel);
-
-                    switchInput.addEventListener('change', function(e) {
-                        e.stopPropagation();
-                        App.theme.set(switchInput.checked);
-                    });
-                    App.elements.debugLog.appendChild(themeToggleContainer);
+                    var debugFunctionalError = document.createElement('p');
+                    debugFunctionalError.textContent = `[${timestamp}] ERROR FUNCIONAL: Servicio de hora no disponible.`;
+                    debugFunctionalError.style.color = '#c1121f'; // Highlight functional error
+                    App.elements.debugLog.appendChild(debugFunctionalError);
                 }
-                // --- End "Servicio de hora no disponible" and Theme Toggle ---
 
                 // Limit debug log to prevent UI clutter
                 while (App.elements.debugLog.children.length > 10) {
@@ -255,9 +218,7 @@ var App = {
                 }
             }
 
-            // Still set theme based on preference if functional error occurred
-            App.theme.set(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            // This opacity makes sunInfo disappear once error occurs, which is desired as its content moved to debug log
+            // Ensure sunInfo is hidden if there's an error and it's not showing actual data
             App.elements.sunInfo.style.opacity = 0;
         }
     },
@@ -285,18 +246,37 @@ var App = {
         this.clock.start();
         this.calendar.render();
         this.calendar.scheduleDailyUpdate();
-        this.theme.init();
-        this.fullscreen.init();
+
+        // Load theme state from localStorage on init, controlled by switch
+        var isDarkModeOn = localStorage.getItem('darkModeOn');
+        if (isDarkModeOn === null) { // If no saved state, use system preference
+            isDarkModeOn = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        } else {
+            isDarkModeOn = (isDarkModeOn === 'true');
+        }
+        App.theme.set(isDarkModeOn);
+
+        if (App.elements.darkModeToggleSwitchInput) {
+            App.elements.darkModeToggleSwitchInput.checked = isDarkModeOn; // Set switch state
+            App.elements.darkModeToggleSwitchInput.addEventListener('change', function() {
+                var isChecked = App.elements.darkModeToggleSwitchInput.checked;
+                App.theme.set(isChecked);
+                localStorage.setItem('darkModeOn', isChecked); // Save state
+            });
+        }
+        
+        this.theme.init(); // This now mainly calls APIs and updates sun info, not initial theme
 
         if (App.elements.debugToggleSwitchInput && App.elements.debugLog) {
-            // The switch container (div.action-button) is already block by default,
-            // so we just need to ensure the switch input is handled.
+            // Load debug log state from localStorage
+            var isDebugLogOn = localStorage.getItem('debugLogOn') === 'true';
+            App.elements.debugToggleSwitchInput.checked = isDebugLogOn;
+            App.elements.debugLog.style.display = isDebugLogOn ? 'block' : 'none';
+
             App.elements.debugToggleSwitchInput.addEventListener('change', function() {
-                if (App.elements.debugToggleSwitchInput.checked) {
-                    App.elements.debugLog.style.display = 'block';
-                } else {
-                    App.elements.debugLog.style.display = 'none';
-                }
+                var isChecked = App.elements.debugToggleSwitchInput.checked;
+                localStorage.setItem('debugLogOn', isChecked);
+                App.elements.debugLog.style.display = isChecked ? 'block' : 'none';
             });
         }
     }

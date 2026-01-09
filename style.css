@@ -1,3 +1,16 @@
+/* --- CSS Variables for Theming --- */
+:root {
+    --background-color: #F8F9FA;
+    --text-color: #212529;
+    --secondary-text-color: #6C757D;
+    --primary-color: #c1121f;
+}
+
+body.dark-mode {
+    --background-color: #1A202C;
+    --text-color: #E2E8F0;
+    --secondary-text-color: #718096;
+}
 /*
   Hoja de estilos final.
   Versión 14: Ajustes finales de UI/UX.
@@ -22,16 +35,11 @@ html, body {
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: #F8F9FA;
-    color: #212529;
+    background-color: var(--background-color);
+    color: var(--text-color);
     display: flex;
     padding: 1vmin;
     transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-body.dark-mode {
-    background-color: #1A202C;
-    color: #E2E8F0;
 }
 
 /* Animación de fundido para el calendario */
@@ -83,31 +91,24 @@ body.dark-mode {
     font-variant-numeric: tabular-nums;
     font-weight: 300;
     line-height: 1;
-    color: #212529;
+    color: var(--text-color);
     transition: color 0.5s ease;
     pointer-events: none; /* Asegura que el click se registre en el contenedor clock-container */
 }
-body.dark-mode #clock-time { color: #E2E8F0; }
 
 #sun-info {
     display: flex;
+    flex-direction: column; /* Allow vertical stacking of error message and switch */
     align-items: center;
     font-size: 3.5vmin; /* Aún más grande */
     font-weight: 500;
     margin-top: 2.5vmin;
-    color: #6C757D;
+    color: var(--secondary-text-color);
     opacity: 0;
     letter-spacing: 0.05em;
     transition: color 0.5s ease, opacity 0.5s ease;
-    pointer-events: none; /* Asegura que el click se registre en el dashboard */
+    pointer-events: none; /* Ensure only clock area is clickable for fullscreen */
 }
-#sun-info svg {
-    width: 3.8vmin; /* Ajustado al nuevo tamaño de fuente */
-    height: 3.8vmin;
-    margin-right: 1.5vmin;
-    fill: currentColor;
-}
-body.dark-mode #sun-info { color: #718096; }
 
 @media (orientation: landscape) {
   #clock-time { font-size: 17vw; }
@@ -125,10 +126,9 @@ body.dark-mode #sun-info { color: #718096; }
     max-width: 450px;
     margin-bottom: 2.5vmin;
     font-size: 4vmin;
-    color: #6C757D;
+    color: var(--secondary-text-color);
     transition: color 0.5s ease, max-width 0.5s ease;
 }
-body.dark-mode #calendar-header { color: #718096; }
 
 .calendar-title {
     font-weight: 600;
@@ -175,14 +175,12 @@ body.dark-mode #calendar-header { color: #718096; }
 }
 
 .day-name .content {
-    color: #94A3B8;
+    color: var(--secondary-text-color);
     font-weight: 600;
 }
-body.dark-mode .day-name .content { color: #718096; }
-body:not(.dark-mode) .day-name .content { color: #6C757D; }
 
 .today .content {
-    background-color: #c1121f;
+    background-color: var(--primary-color);
     color: #FFFFFF;
     font-weight: 700;
     border-radius: 50%;
@@ -195,20 +193,12 @@ body:not(.dark-mode) .day-name .content { color: #6C757D; }
     .nav-arrow { font-size: 36px; }
     .calendar-cell { font-size: 18px; }
     #sun-info { font-size: 24px; } /* Ajustado */
-/* --- Estilos para pantallas grandes --- */
-@media (min-width: 768px) {
-    #calendar-header, #calendar-grid { max-width: 600px; grid-gap: 2vmin; }
-    #calendar-header { font-size: 26px; }
-    .nav-arrow { font-size: 36px; }
-    .calendar-cell { font-size: 18px; }
-    #sun-info { font-size: 24px; } /* Ajustado */
     #sun-info svg { width: 25px; height: 25px; margin-right: 10px; } /* Ajustado */
 }
 
 /* --- Action Button Styling --- */
 .action-button {
-    /* Semi-transparent dark */
-    color: #E2E8F0;
+    color: var(--text-color); /* Use theme text color */
     border: none;
     border-radius: 5px;
     padding: 5px 8px; /* Adjusted padding for switch container */
@@ -254,7 +244,7 @@ body:not(.dark-mode) .day-name .content { color: #6C757D; }
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--secondary-text-color); /* Use theme secondary text color */
     -webkit-transition: .4s;
     transition: .4s;
     border-radius: 20px; /* Rounder slider */
@@ -274,11 +264,11 @@ body:not(.dark-mode) .day-name .content { color: #6C757D; }
 }
 
 input:checked + .slider {
-    background-color: #c1121f; /* Theme accent color */
+    background-color: var(--primary-color); /* Theme accent color */
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #c1121f;
+    box-shadow: 0 0 1px var(--primary-color);
 }
 
 input:checked + .slider:before {
