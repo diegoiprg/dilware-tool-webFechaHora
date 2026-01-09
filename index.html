@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Dashboard</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CZBKZNLYPD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-CZBKZNLYPD'); // REPLACE G-YOUR_MEASUREMENT_ID with your actual Measurement ID
+    </script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -36,11 +45,6 @@
         <span style="color: var(--text-color); margin-left: 15px; margin-right: 8px; font-size: 14px;">fullscreen</span>
         <label class="switch" title="Activar/Desactivar Pantalla Completa">
             <input type="checkbox" id="fullscreen-toggle-switch">
-            <span class="slider"></span>
-        </label>
-        <span style="color: var(--text-color); margin-left: 15px; margin-right: 8px; font-size: 14px;">brillo</span>
-        <label class="switch" title="Ajustar Brillo de Pantalla">
-            <input type="checkbox" id="brightness-toggle-switch">
             <span class="slider"></span>
         </label>
     </div>
