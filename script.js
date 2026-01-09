@@ -208,7 +208,7 @@ var App = {
                 if (step === 'solares') {
                     var debugFunctionalError = document.createElement('p');
                     debugFunctionalError.textContent = `[${timestamp}] ERROR FUNCIONAL: Servicio de hora no disponible.`;
-                    debugFunctionalError.style.color = '#c1121f'; // Highlight functional error
+                    debugFunctionalError.style.color = 'var(--text-color)'; // Make legible against debug log background
                     App.elements.debugLog.appendChild(debugFunctionalError);
                 }
 
