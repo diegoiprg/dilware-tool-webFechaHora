@@ -26,7 +26,7 @@ var App = {
         sunsetMinutes: null,
     },
 
-    makeApiRequest: function(url, onSuccess, onError) {
+    makeApiRequest: function(url, onSuccess, onErrorCallback) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url, true);
         xhr.onreadystatechange = function() {
@@ -35,11 +35,11 @@ var App = {
                     try {
                         var json = JSON.parse(xhr.responseText);
                         onSuccess(json);
-                    } catch (e) { onError(e); }
-                } else { onError(new Error('Error de red: ' + xhr.status)); }
+                    } catch (e) { onErrorCallback(e, url); }
+                } else { onErrorCallback(new Error('Error de red: ' + xhr.status), url); }
             }
         };
-        xhr.onerror = function() { onError(new Error('Fallo de red desconocido')); };
+        xhr.onerror = function() { onErrorCallback(new Error('Fallo de red desconocido'), url); };
         xhr.send();
     },
 
@@ -150,8 +150,8 @@ var App = {
                     App.state.sunsetMinutes = timeStringToMinutes(sunData.daily.sunset[0]);
                     App.theme.update();
                     setInterval(function() { App.theme.update(); }, 60000);
-                }, function(error) { App.theme.onError(error, 'solares'); });
-            }, function(error) { App.theme.onError(error, 'ubicación'); });
+                }, function(error, url) { App.theme.onError(error, 'solares', url); });
+            }, function(error, url) { App.theme.onError(error, 'ubicación', url); });
         },
         update: function() {
             if (App.state.sunriseMinutes === null || App.state.sunsetMinutes === null) return;
@@ -170,8 +170,8 @@ var App = {
             if (isDark) App.elements.body.classList.add('dark-mode');
             else App.elements.body.classList.remove('dark-mode');
         },
-        onError: function(error, step) {
-            console.error("Fallo en el paso '" + step + "':", error);
+        onError: function(error, step, url) {
+            console.error("Fallo en el paso '" + step + "' (" + url + "):", error);
             App.theme.set(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
             App.elements.sunInfo.innerHTML = 'Servicio de hora no disponible.';
             App.elements.sunInfo.style.opacity = 1;
