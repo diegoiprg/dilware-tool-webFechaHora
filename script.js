@@ -14,12 +14,67 @@ var App = {
         debugToggleSwitchInput: document.getElementById('debug-toggle-switch'),
         darkModeToggleSwitchInput: document.getElementById('dark-mode-toggle-switch'),
         fullscreenToggleSwitchInput: document.getElementById('fullscreen-toggle-switch'),
+        brightnessToggleSwitchInput: document.getElementById('brightness-toggle-switch'),
     },
 
     // Iconos SVG para sol y luna. Son limpios, escalables y heredan el color.
     icons: {
         sun: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>',
         moon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>'
+    },
+
+    brightness: {
+        init: function() {
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.brightness.init() iniciado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
+            try {
+                if (App.elements.brightnessToggleSwitchInput) {
+                    this.applyInitialBrightness(); // Apply brightness based on stored state on load
+                    App.elements.brightnessToggleSwitchInput.addEventListener('change', App.brightness.handleSwitchChange);
+                }
+            } catch (e) {
+                if (App.elements.debugLog) {
+                    var msg = document.createElement('p');
+                    var timestamp = new Date().toLocaleTimeString();
+                    msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.brightness.init(): ${e.message || e.toString()}`;
+                    msg.style.color = 'red';
+                    App.elements.debugLog.appendChild(msg);
+                    App.elements.debugLog.style.display = 'block';
+                }
+            }
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.brightness.init() finalizado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
+        },
+        handleSwitchChange: function() {
+            var isChecked = App.elements.brightnessToggleSwitchInput.checked;
+            App.brightness.setBrightness(isChecked);
+            localStorage.setItem('brightnessOn', isChecked);
+        },
+        setBrightness: function(on) {
+            if (on) {
+                App.elements.body.style.filter = 'brightness(75%)';
+            } else {
+                App.elements.body.style.filter = 'brightness(25%)';
+            }
+        },
+        applyInitialBrightness: function() {
+            var isBrightnessOn = localStorage.getItem('brightnessOn');
+            if (isBrightnessOn === null) {
+                isBrightnessOn = false; // Default to 25% brightness
+            } else {
+                isBrightnessOn = (isBrightnessOn === 'true');
+            }
+            App.elements.brightnessToggleSwitchInput.checked = isBrightnessOn;
+            App.brightness.setBrightness(isBrightnessOn);
+        }
     },
 
     state: {
@@ -423,6 +478,10 @@ var App = {
 
             if (App.elements.fullscreenToggleSwitchInput) {
                 App.fullscreen.init(); // Initialize fullscreen logic
+            }
+
+            if (App.elements.brightnessToggleSwitchInput) {
+                App.brightness.init(); // Initialize brightness logic
             }
         } catch (e) {
             if (App.elements.debugLog) {
