@@ -438,6 +438,67 @@ var App = {
         }
     },
 
+    antiBurnIn: {
+        lastShiftX: 0,
+        lastShiftY: 0,
+        init: function() {
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.antiBurnIn.init() iniciado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
+            try {
+                // Initial shift
+                this.shiftElements();
+                // Shift every 5 minutes (300000 ms)
+                setInterval(this.shiftElements.bind(this), 300000);
+            } catch (e) {
+                if (App.elements.debugLog) {
+                    var msg = document.createElement('p');
+                    var timestamp = new Date().toLocaleTimeString();
+                    msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.antiBurnIn.init(): ${e.message || e.toString()}`;
+                    msg.style.color = 'red';
+                    App.elements.debugLog.appendChild(msg);
+                    App.elements.debugLog.style.display = 'block';
+                }
+            }
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] App.antiBurnIn.init() finalizado.`;
+                App.elements.debugLog.appendChild(msg);
+            }
+        },
+        shiftElements: function() {
+            // Define max shift range (e.g., +/- 0.5% of viewport width/height)
+            const maxShiftX = window.innerWidth * 0.005;
+            const maxShiftY = window.innerHeight * 0.005;
+
+            // Generate new shift values within the range, but different from current
+            let newShiftX, newShiftY;
+            do {
+                newShiftX = (Math.random() * maxShiftX * 2) - maxShiftX; // Between -maxShiftX and +maxShiftX
+                newShiftY = (Math.random() * maxShiftY * 2) - maxShiftY; // Between -maxShiftY and +maxShiftY
+            } while (Math.abs(newShiftX - this.lastShiftX) < 1 && Math.abs(newShiftY - this.lastShiftY) < 1); // Ensure noticeable change
+
+            this.lastShiftX = newShiftX;
+            this.lastShiftY = newShiftY;
+
+            if (App.elements.dashboard) {
+                App.elements.dashboard.style.transform = `translate(${newShiftX}px, ${newShiftY}px)`;
+                App.elements.dashboard.style.transition = 'transform 2s ease-out'; // Smooth transition
+            }
+
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] Anti-burn-in shift: X=${newShiftX.toFixed(2)}px, Y=${newShiftY.toFixed(2)}px`;
+                App.elements.debugLog.appendChild(msg);
+            }
+        }
+    },
+
     init: function() {
         if (App.elements.debugLog) {
             var msg = document.createElement('p');
@@ -502,6 +563,9 @@ var App = {
                     });
                 });
             }
+
+            // Initialize anti-burn-in functionality
+            App.antiBurnIn.init();
         } catch (e) {
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
