@@ -81,7 +81,7 @@ body {
 
 /* --- Reloj y Amanecer/Atardecer --- */
 #clock-container {
-    transition: transform 0.1s ease; /* Feedback visual al tocar */
+    /* Removed transition: transform 0.1s ease; */
 }
 
 #clock-time {

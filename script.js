@@ -136,10 +136,9 @@ var App = {
     
     theme: {
         init: function() {
-                                                App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
-                                                App.elements.sunInfo.style.opacity = 1;
+            App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
                                     
-                                                if ("geolocation" in navigator) {                            navigator.geolocation.getCurrentPosition(function(position) {
+            if ("geolocation" in navigator) {                            navigator.geolocation.getCurrentPosition(function(position) {
                                 var geo = {
                                     latitude: position.coords.latitude,
                                     longitude: position.coords.longitude
@@ -237,16 +236,28 @@ var App = {
 
                 // Set up event listener for the switch
                 App.elements.fullscreenToggleSwitchInput.addEventListener('change', App.fullscreen.handleSwitchChange);
-
-                // Try to enter fullscreen on init if it was on (browser may require user gesture)
-                if (isFullscreenOn) {
-                    App.fullscreen.enterFullscreen();
-                }
+            }
+        },
+        enterFullscreen: function() {
+            var el = document.documentElement;
+            if (el.requestFullscreen) el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] Intentando entrar en fullscreen.`;
+                App.elements.debugLog.appendChild(msg);
             }
         },
         exitFullscreen: function() {
             if (document.exitFullscreen) document.exitFullscreen();
             else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString();
+                msg.textContent = `[${timestamp}] Intentando salir de fullscreen.`;
+                App.elements.debugLog.appendChild(msg);
+            }
         },
         updateSwitchState: function() {
             if (App.elements.fullscreenToggleSwitchInput) {
