@@ -227,41 +227,38 @@ var App = {
     fullscreen: {
         init: function() {
             if (App.elements.fullscreenToggleSwitchInput) {
+                // Add fullscreen change listeners once at init
+                document.addEventListener('fullscreenchange', App.fullscreen.updateSwitchState);
+                document.addEventListener('webkitfullscreenchange', App.fullscreen.updateSwitchState);
+
                 // Load fullscreen state from localStorage
                 var isFullscreenOn = localStorage.getItem('fullscreenOn') === 'true';
                 App.elements.fullscreenToggleSwitchInput.checked = isFullscreenOn;
 
-                // If fullscreen was on, try to re-enter
-                if (isFullscreenOn) {
-                    var el = document.documentElement;
-                    if (el.requestFullscreen) el.requestFullscreen();
-                    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-                }
+                // Set up event listener for the switch
+                App.elements.fullscreenToggleSwitchInput.addEventListener('change', App.fullscreen.handleSwitchChange);
 
-                App.elements.fullscreenToggleSwitchInput.addEventListener('change', function() {
-                    var isChecked = App.elements.fullscreenToggleSwitchInput.checked;
-                    App.fullscreen.toggle();
-                    localStorage.setItem('fullscreenOn', isChecked); // Save state
-                });
+                // Try to enter fullscreen on init if it was on (browser may require user gesture)
+                if (isFullscreenOn) {
+                    App.fullscreen.enterFullscreen();
+                }
             }
         },
-        toggle: function() {
-            var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
-            var isSwitchChecked = App.elements.fullscreenToggleSwitchInput ? App.elements.fullscreenToggleSwitchInput.checked : false;
-
-            if (!fsEl && isSwitchChecked) { // Enter fullscreen if not in it and switch is checked
-                var el = document.documentElement;
-                if (el.requestFullscreen) el.requestFullscreen();
-                else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-            } else if (fsEl && !isSwitchChecked) { // Exit fullscreen if in it and switch is unchecked
-                if (document.exitFullscreen) document.exitFullscreen();
-                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-            }
-            // If the user exits fullscreen via ESC key, the switch should update
-            document.addEventListener('fullscreenchange', App.fullscreen.updateSwitchState);
-            document.addEventListener('webkitfullscreenchange', App.fullscreen.updateSwitchState);
+        exitFullscreen: function() {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         },
         updateSwitchState: function() {
+            if (App.elements.fullscreenToggleSwitchInput) {
+                var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+                var isCurrentlyFullscreen = (fsEl !== null);
+                // Update switch state only if it differs from current fullscreen state
+                if (App.elements.fullscreenToggleSwitchInput.checked !== isCurrentlyFullscreen) {
+                    App.elements.fullscreenToggleSwitchInput.checked = isCurrentlyFullscreen;
+                }
+                localStorage.setItem('fullscreenOn', isCurrentlyFullscreen);
+            }
+        }
             if (App.elements.fullscreenToggleSwitchInput) {
                 var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
                 App.elements.fullscreenToggleSwitchInput.checked = (fsEl !== null);

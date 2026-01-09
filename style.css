@@ -83,9 +83,6 @@ body {
 #clock-container {
     transition: transform 0.1s ease; /* Feedback visual al tocar */
 }
-#clock-container:active {
-    transform: scale(0.99); /* Ligero encogimiento al tocar */
-}
 
 #clock-time {
     font-variant-numeric: tabular-nums;
@@ -223,8 +220,8 @@ body {
 .switch {
     position: relative;
     display: inline-block;
-    width: 40px; /* Smaller width */
-    height: 20px; /* Smaller height */
+    width: 50px; /* Larger width */
+    height: 26px; /* Larger height */
     margin-left: 10px; /* Spacing from text/other elements */
     vertical-align: middle; /* Align with text */
 }
@@ -247,16 +244,16 @@ body {
     background-color: var(--secondary-text-color); /* Use theme secondary text color */
     -webkit-transition: .4s;
     transition: .4s;
-    border-radius: 20px; /* Rounder slider */
+    border-radius: 26px; /* Rounder slider to match new height */
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 16px; /* Smaller thumb */
-    width: 16px; /* Smaller thumb */
-    left: 2px;
-    bottom: 2px;
+    height: 20px; /* Larger thumb */
+    width: 20px; /* Larger thumb */
+    left: 3px;
+    bottom: 3px;
     background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
@@ -272,8 +269,8 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-    -webkit-transform: translateX(20px); /* Move thumb to right */
-    -ms-transform: translateX(20px);
-    transform: translateX(20px);
+    -webkit-transform: translateX(24px); /* Move thumb to right to match new size */
+    -ms-transform: translateX(24px);
+    transform: translateX(24px);
 }
 
