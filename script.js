@@ -592,6 +592,8 @@ var App = {
                         option_name: 'dark_mode',
                         option_state: isDarkModeOn ? 'on' : 'off'
                     });
+                    // Force re-render of the icon
+                    App.elements.darkModeButton.innerHTML = ''; // Clear current icon
                     App.loadSvgIcon(isDarkModeOn ? App.icons.moon : App.icons.sun, App.elements.darkModeButton);
                 });
                 // Cargar estado inicial del dark mode
