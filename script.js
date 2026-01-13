@@ -206,6 +206,12 @@ var App = {
                     if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { classList.push('today'); }
                     this.createCell(day, classList, App.elements.calendarGrid);
                 }
+                // Asegurar que siempre haya 6 filas (42 celdas) para mantener la altura constante
+                var totalCellsRendered = firstDayOfMonth + daysInMonth;
+                var remainingCells = 42 - totalCellsRendered; // Máximo 6 semanas * 7 días
+                for (var i = 0; i < remainingCells; i++) {
+                    this.createCell('', null, App.elements.calendarGrid);
+                }
                 // Forzar reflow para que la animación se ejecute
                 void App.elements.calendarGrid.offsetWidth;
                 App.elements.calendarGrid.classList.add('fade-in');
@@ -592,9 +598,9 @@ var App = {
                         option_name: 'dark_mode',
                         option_state: isDarkModeOn ? 'on' : 'off'
                     });
-                    // Force re-render of the icon
+                    // Force re-render of the icon and apply correct logic
                     App.elements.darkModeButton.innerHTML = ''; // Clear current icon
-                    App.loadSvgIcon(isDarkModeOn ? App.icons.moon : App.icons.sun, App.elements.darkModeButton);
+                    App.loadSvgIcon(isDarkModeOn ? App.icons.sun : App.icons.moon, App.elements.darkModeButton);
                 });
                 // Cargar estado inicial del dark mode
                 var isDarkModeOn = localStorage.getItem('darkModeOn');
@@ -603,7 +609,7 @@ var App = {
                 } else {
                     isDarkModeOn = (isDarkModeOn === 'true');
                 }
-                App.loadSvgIcon(isDarkModeOn ? App.icons.moon : App.icons.sun, App.elements.darkModeButton);
+                App.loadSvgIcon(isDarkModeOn ? App.icons.sun : App.icons.moon, App.elements.darkModeButton);
             }
             
             this.theme.init(); // This now mainly calls APIs and updates sun info, not initial theme

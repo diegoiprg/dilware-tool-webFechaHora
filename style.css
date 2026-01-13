@@ -102,7 +102,7 @@
     #calendar-header { font-size: 26px; }
     .nav-arrow { font-size: 36px; }
     .calendar-cell { font-size: 18px; }
-    #sun-info { font-size: 24px; } /* Ajustado */
+    #sun-info { font-size: 30px; } /* Increased */
     #sun-info svg { width: 25px; height: 25px; margin-right: 10px; } /* Ajustado */
 }
 
