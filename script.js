@@ -274,66 +274,63 @@ var App = {
                 App.elements.debugLog.appendChild(msg);
             }
             try {
-                // Initial loading state for geolocation
-                App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
-                App.elements.sunInfo.style.opacity = 1; // Ensure it's visible
+                // Se elimina el estado de carga inicial para la geolocalización.
+                // App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
+                // App.elements.sunInfo.style.opacity = 1; // Ensure it's visible
 
                 if ("geolocation" in navigator) {
                     navigator.geolocation.getCurrentPosition(function(position) {
-                                    App.trackEvent('geolocation_permission', { permission_status: 'granted' });
-                                    var geo = {
-                                        latitude: position.coords.latitude,
-                                        longitude: position.coords.longitude
-                                    };
-                                    // Update loading state for API call
-                                    App.elements.sunInfo.innerHTML = 'Obteniendo datos solares...';
-                                    var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.latitude +
-                                                 '&longitude=' + geo.longitude + '&daily=sunrise,sunset&timezone=auto';
-                                    App.makeApiRequest(apiUrl, function(sunData) {
-                                        function timeStringToMinutes(isoString) {
-                                            var timePart = isoString.split('T')[1];
-                                            var hours = parseInt(timePart.split(':')[0], 10);
-                                            var minutes = parseInt(timePart.split(':')[1], 10);
-                                            return (hours * 60) + minutes;
-                                        }
-                                        App.state.sunriseMinutes = timeStringToMinutes(sunData.daily.sunrise[0]);
-                                        App.state.sunsetMinutes = timeStringToMinutes(sunData.daily.sunset[0]);
-                                        App.theme.update();
-                                        setInterval(function() { App.theme.update(); }, 60000);
-                                    }, function(error, url) {
-                                        // API request failed, display user-friendly error
-                                        App.elements.sunInfo.innerHTML = 'Error al obtener datos solares.';
-                                        App.elements.sunInfo.style.opacity = 1;
-                                        App.theme.onError(error, 'solares', url);
-                                    });
-                                                }, function(error) {
-                                                    var errorMessage;
-                                                    switch (error.code) {
-                                                        case error.PERMISSION_DENIED:
-                                                            errorMessage = 'Permiso de ubicación denegado. No se puede obtener información solar.';
-                                                            break;
-                                                        case error.POSITION_UNAVAILABLE:
-                                                            errorMessage = 'Información de ubicación no disponible. No se puede obtener información solar.';
-                                                            break;
-                                                        case error.TIMEOUT:
-                                                            errorMessage = 'La solicitud para obtener la ubicación ha caducado. No se puede obtener información solar.';
-                                                            break;
-                                                        default:
-                                                            errorMessage = 'Error desconocido de Geolocation. No se puede obtener información solar.';
-                                                            break;
-                                                    }
-                                                    App.trackEvent('geolocation_permission', { permission_status: 'denied', error_message: errorMessage });
-                                                    App.elements.sunInfo.innerHTML = errorMessage;
-                                                    App.elements.sunInfo.style.opacity = 1;
-                                                    App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
-                                                });
-                                            } else {
-                                                var errorMessage = 'Geolocalización no soportada por el navegador. No se puede obtener información solar.';
-                                                App.trackEvent('geolocation_error', { error_message: errorMessage });
-                                                App.elements.sunInfo.innerHTML = errorMessage;
-                                                App.elements.sunInfo.style.opacity = 1;
-                                                App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
-                                            }
+                        App.trackEvent('geolocation_permission', { permission_status: 'granted' });
+                        var geo = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        };
+                        // Se elimina el estado de carga para la llamada API.
+                        // App.elements.sunInfo.innerHTML = 'Obteniendo datos solares...';
+                        var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.latitude +
+                                     '&longitude=' + geo.longitude + '&daily=sunrise,sunset&timezone=auto';
+                        App.makeApiRequest(apiUrl, function(sunData) {
+                            function timeStringToMinutes(isoString) {
+                                var timePart = isoString.split('T')[1];
+                                var hours = parseInt(timePart.split(':')[0], 10);
+                                var minutes = parseInt(timePart.split(':')[1], 10);
+                                return (hours * 60) + minutes;
+                            }
+                            App.state.sunriseMinutes = timeStringToMinutes(sunData.daily.sunrise[0]);
+                            App.state.sunsetMinutes = timeStringToMinutes(sunData.daily.sunset[0]);
+                            App.theme.update();
+                            setInterval(function() { App.theme.update(); }, 60000);
+                        }, function(error, url) {
+                            // La solicitud a la API falló, se activa el modo de fallback.
+                            App.theme.onError(error, 'solares', url);
+                            App.theme.setFallback();
+                        });
+                    }, function(error) {
+                        var errorMessage;
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = 'Permiso de ubicación denegado. No se puede obtener información solar.';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = 'Información de ubicación no disponible. No se puede obtener información solar.';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = 'La solicitud para obtener la ubicación ha caducado. No se puede obtener información solar.';
+                                break;
+                            default:
+                                errorMessage = 'Error desconocido de Geolocation. No se puede obtener información solar.';
+                                break;
+                        }
+                        App.trackEvent('geolocation_permission', { permission_status: 'denied', error_message: errorMessage });
+                        App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
+                        App.theme.setFallback();
+                    });
+                } else {
+                    var errorMessage = 'Geolocalización no soportada por el navegador. No se puede obtener información solar.';
+                    App.trackEvent('geolocation_error', { error_message: errorMessage });
+                    App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
+                    App.theme.setFallback();
+                }
             } catch (e) {
                 if (App.elements.debugLog) {
                     var msg = document.createElement('p');
@@ -342,10 +339,9 @@ var App = {
                     msg.style.color = 'white';
                     msg.style.fontWeight = 'bold';
                     App.elements.debugLog.appendChild(msg);
-                    App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
+                    App.elements.debugLog.style.display = 'block';
                 }
-                App.elements.sunInfo.innerHTML = 'Error de inicialización.';
-                App.elements.sunInfo.style.opacity = 1;
+                App.theme.setFallback();
             }
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
@@ -355,7 +351,10 @@ var App = {
             }
         },
         update: function() {
-            if (App.state.sunriseMinutes === null || App.state.sunsetMinutes === null) return;
+            if (App.state.sunriseMinutes === null || App.state.sunsetMinutes === null) {
+                App.elements.sunInfo.style.opacity = 0; // Oculta si no hay datos.
+                return;
+            }
             var now = new Date();
             var nowMinutes = now.getHours() * 60 + now.getMinutes();
             var isNight = nowMinutes < App.state.sunriseMinutes || nowMinutes > App.state.sunsetMinutes;
@@ -365,18 +364,18 @@ var App = {
             var hours = String(Math.floor(targetMinutes / 60)).padStart(2, '0');
             var minutes = String(targetMinutes % 60).padStart(2, '0');
 
-            // Clear previous content
+            // Limpia el contenido previo.
             App.elements.sunInfo.innerHTML = '';
 
-            // Create a container for the SVG icon
+            // Crea un contenedor para el ícono SVG.
             var iconContainer = document.createElement('span');
             iconContainer.className = 'sun-moon-icon';
             App.elements.sunInfo.appendChild(iconContainer);
 
-            // Load SVG icon into the container
+            // Carga el ícono SVG en el contenedor.
             App.loadSvgIcon(iconUrl, iconContainer);
             
-            // Add time text
+            // Agrega el texto de la hora.
             var timeSpan = document.createElement('span');
             timeSpan.textContent = hours + ':' + minutes;
             App.elements.sunInfo.appendChild(timeSpan);
@@ -386,13 +385,26 @@ var App = {
         set: function(isDark) {
             if (isDark) App.elements.body.classList.add('dark-mode');
             else App.elements.body.classList.remove('dark-mode');
-            localStorage.setItem('darkModeOn', isDark); // Save state
+            localStorage.setItem('darkModeOn', isDark); // Guarda el estado.
+        },
+        setFallback: function() {
+            if (App.elements.debugLog) {
+                var msg = document.createElement('p');
+                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
+                msg.textContent = `[${timestamp}] App.theme.setFallback() iniciado. No hay datos solares, usando horarios fijos (7am/7pm).`;
+                App.elements.debugLog.appendChild(msg);
+            }
+            // Horarios fijos: amanecer a las 7:00, atardecer a las 19:00.
+            App.state.sunriseMinutes = 7 * 60;
+            App.state.sunsetMinutes = 19 * 60;
+            App.theme.update();
+            setInterval(function() { App.theme.update(); }, 60000);
         },
         onError: function(error, step, url) {
             console.error("Fallo en el paso '" + step + "' (" + url + "):", error);
 
             if (App.elements.debugLog) {
-                // Log the technical error
+                // Loguea el error técnico.
                 var debugMessage = document.createElement('p');
                 var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                 debugMessage.textContent = `[${timestamp}] ERROR en '${step}' (${url}): ${error.message || error.toString()}`;
@@ -400,15 +412,15 @@ var App = {
                 debugMessage.style.fontWeight = 'bold';
                 App.elements.debugLog.appendChild(debugMessage);
 
-                // Limit debug log to prevent UI clutter
+                // Limita el log de depuración para evitar sobrecargar la UI.
                 while (App.elements.debugLog.children.length > 10) {
                     App.elements.debugLog.removeChild(App.elements.debugLog.firstChild);
                 }
             }
 
-            // Ensure sunInfo is hidden if there's an error and it's not showing actual data
-            // (This might be overridden by calling functions if they want to display an error message)
-            // App.elements.sunInfo.style.opacity = 0;
+            // Asegura que sunInfo esté oculto si hay un error.
+            App.elements.sunInfo.style.opacity = 0;
+            App.elements.sunInfo.innerHTML = ''; // Limpia cualquier mensaje de error previo.
         }
     },
 
