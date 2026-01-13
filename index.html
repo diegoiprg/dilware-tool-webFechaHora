@@ -145,27 +145,10 @@ body {
 
     <div class="top-right-controls">
         <button id="fullscreen-button" class="control-button" title="Pantalla Completa"></button>
-        <button id="settings-button" class="control-button" title="Ajustes"></button>
+        <button id="debug-button" class="control-button" title="Alternar Depuración"></button>
+        <button id="dark-mode-button" class="control-button" title="Alternar Modo Oscuro"></button>
     </div>
 
-    <div id="settings-panel" class="settings-panel" style="display: none;">
-        <div class="settings-content">
-            <div class="setting-item">
-                <span style="color: var(--text-color); margin-right: 8px; font-size: 14px;">debug</span>
-                <label class="switch" title="Activar/Desactivar Log de Depuración" aria-label="Activar/Desactivar Log de Depuración">
-                    <input type="checkbox" id="debug-toggle-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="setting-item">
-                <span style="color: var(--text-color); margin-right: 8px; font-size: 14px;">darkmode</span>
-                <label class="switch" title="Activar/Desactivar Modo Oscuro" aria-label="Activar/Desactivar Modo Oscuro">
-                    <input type="checkbox" id="dark-mode-toggle-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-    </div>
     <script src="script.js" defer></script>
     <div id="debug-log" style="position: fixed; bottom: 0; left: 0; width: 100%; background-color: rgba(0,0,0,0.8); color: white; padding: 10px; font-family: monospace; font-size: 12px; max-height: 50vh; overflow-y: auto; z-index: 1000; display: none;"></div>
 </body>

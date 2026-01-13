@@ -185,9 +185,9 @@ input:checked + .slider:before {
     border: none;
     color: var(--text-color);
     cursor: pointer;
-    width: 44px;
-    height: 44px;
-    padding: 8px;
+    width: 52px;
+    height: 52px;
+    padding: 10px;
     border-radius: 50%;
     transition: background-color 0.2s ease;
 }
@@ -200,39 +200,6 @@ input:checked + .slider:before {
     width: 100%;
     height: 100%;
     stroke-width: 1.5;
-}
-
-.settings-panel {
-    position: fixed;
-    top: 55px;
-    right: 10px;
-    background-color: var(--background-color);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 1001;
-    padding: 12px;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    transform: translateY(-10px);
-    opacity: 0;
-    pointer-events: none;
-}
-
-.settings-panel.visible {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.settings-content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.setting-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .info-banner {

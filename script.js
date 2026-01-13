@@ -11,11 +11,9 @@ var App = {
         calendarHeader: document.getElementById('calendar-header'),
         calendarGrid: document.getElementById('calendar-grid'),
         debugLog: document.getElementById('debug-log'),
-        debugToggleSwitchInput: document.getElementById('debug-toggle-switch'),
-        darkModeToggleSwitchInput: document.getElementById('dark-mode-toggle-switch'),
-        settingsButton: document.getElementById('settings-button'),
+        debugButton: document.getElementById('debug-button'),
+        darkModeButton: document.getElementById('dark-mode-button'),
         fullscreenButton: document.getElementById('fullscreen-button'),
-        settingsPanel: document.getElementById('settings-panel'),
         infoBanner: document.getElementById('info-banner'),
         infoBannerText: document.getElementById('info-banner-text'),
         infoBannerClose: document.getElementById('info-banner-close'),
@@ -24,7 +22,7 @@ var App = {
     icons: {
         sun: 'svg/sun.svg',
         moon: 'svg/moon.svg',
-        settings: 'svg/settings.svg',
+        bug: 'svg/bug.svg', // Added bug icon
         fullscreen: 'svg/fullscreen.svg',
         fullscreenExit: 'svg/fullscreen-exit.svg'
     },
@@ -561,66 +559,52 @@ var App = {
             this.calendar.scheduleDailyUpdate();
 
             // Carga los iconos de los controles
-            App.loadSvgIcon(App.icons.settings, App.elements.settingsButton);
-            
-            // Lógica del panel de ajustes
-            if (App.elements.settingsButton && App.elements.settingsPanel) {
-                App.elements.settingsButton.addEventListener('click', (event) => {
-                    event.stopPropagation();
-                    console.log('Settings button clicked!'); // Debug log
-                    App.elements.settingsPanel.classList.add('visible'); // For debugging, use add instead of toggle
+            App.fullscreen.updateButtonIcon(); // Carga el icono inicial de fullscreen
+            App.loadSvgIcon(App.icons.bug, App.elements.debugButton); // Carga el icono inicial de debug
+            App.loadSvgIcon(App.icons.moon, App.elements.darkModeButton); // Carga el icono inicial de dark mode
+
+            // Lógica de los botones de control
+            if (App.elements.debugButton) {
+                App.elements.debugButton.addEventListener('click', () => {
+                    var isDebugOn = App.elements.debugLog.style.display === 'block';
+                    isDebugOn = !isDebugOn;
+                    App.elements.debugLog.style.display = isDebugOn ? 'block' : 'none';
+                    localStorage.setItem('debugLogOn', isDebugOn);
+                    App.trackEvent('option_toggled', {
+                        option_name: 'debug',
+                        option_state: isDebugOn ? 'on' : 'off'
+                    });
+                    // Opcional: Cambiar el estilo del icono de depuración si es necesario.
+                    // App.elements.debugButton.classList.toggle('active', isDebugOn);
                 });
-                // Opcional: cerrar el panel si se hace clic fuera
-                /*
-                document.addEventListener('click', (event) => {
-                    if (App.elements.settingsPanel.classList.contains('visible') && !App.elements.settingsPanel.contains(event.target)) {
-                        App.elements.settingsPanel.classList.remove('visible');
-                    }
-                });
-                */
+                // Cargar estado inicial del debug
+                var isDebugLogOn = localStorage.getItem('debugLogOn') === 'true';
+                App.elements.debugLog.style.display = isDebugLogOn ? 'block' : 'none';
             }
 
-
-            // Load theme state from localStorage on init, controlled by switch
-            var isDarkModeOn = localStorage.getItem('darkModeOn');
-            if (isDarkModeOn === null) { // If no saved state, use system preference
-                isDarkModeOn = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            } else {
-                isDarkModeOn = (isDarkModeOn === 'true');
-            }
-            App.theme.set(isDarkModeOn);
-
-            if (App.elements.darkModeToggleSwitchInput) {
-                App.elements.darkModeToggleSwitchInput.checked = isDarkModeOn; // Set switch state
-                App.elements.darkModeToggleSwitchInput.addEventListener('change', function() {
-                    var isChecked = App.elements.darkModeToggleSwitchInput.checked;
-                    App.theme.set(isChecked);
-                    localStorage.setItem('darkModeOn', isChecked); // Save state
+            if (App.elements.darkModeButton) {
+                App.elements.darkModeButton.addEventListener('click', () => {
+                    var isDarkModeOn = App.elements.body.classList.contains('dark-mode');
+                    isDarkModeOn = !isDarkModeOn;
+                    App.theme.set(isDarkModeOn);
+                    localStorage.setItem('darkModeOn', isDarkModeOn);
                     App.trackEvent('option_toggled', {
                         option_name: 'dark_mode',
-                        option_state: isChecked ? 'on' : 'off'
+                        option_state: isDarkModeOn ? 'on' : 'off'
                     });
+                    App.loadSvgIcon(isDarkModeOn ? App.icons.moon : App.icons.sun, App.elements.darkModeButton);
                 });
+                // Cargar estado inicial del dark mode
+                var isDarkModeOn = localStorage.getItem('darkModeOn');
+                if (isDarkModeOn === null) {
+                    isDarkModeOn = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                } else {
+                    isDarkModeOn = (isDarkModeOn === 'true');
+                }
+                App.loadSvgIcon(isDarkModeOn ? App.icons.moon : App.icons.sun, App.elements.darkModeButton);
             }
             
             this.theme.init(); // This now mainly calls APIs and updates sun info, not initial theme
-
-            if (App.elements.debugToggleSwitchInput && App.elements.debugLog) {
-                // Load debug log state from localStorage
-                var isDebugLogOn = localStorage.getItem('debugLogOn') === 'true';
-                App.elements.debugToggleSwitchInput.checked = isDebugLogOn;
-                App.elements.debugLog.style.display = isDebugLogOn ? 'block' : 'none';
-
-                App.elements.debugToggleSwitchInput.addEventListener('change', function() {
-                    var isChecked = App.elements.debugToggleSwitchInput.checked;
-                    localStorage.setItem('debugLogOn', isChecked);
-                    App.elements.debugLog.style.display = isChecked ? 'block' : 'none';
-                    App.trackEvent('option_toggled', {
-                        option_name: 'debug',
-                        option_state: isChecked ? 'on' : 'off'
-                    });
-                });
-            }
 
             // Inicializa la lógica de fullscreen
             App.fullscreen.init();
