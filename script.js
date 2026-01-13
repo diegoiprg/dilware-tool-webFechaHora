@@ -565,12 +565,13 @@ var App = {
             
             // Lógica del panel de ajustes
             if (App.elements.settingsButton && App.elements.settingsPanel) {
-                App.elements.settingsButton.addEventListener('click', () => {
+                App.elements.settingsButton.addEventListener('click', (event) => {
+                    event.stopPropagation();
                     App.elements.settingsPanel.classList.toggle('visible');
                 });
                 // Opcional: cerrar el panel si se hace clic fuera
                 document.addEventListener('click', (event) => {
-                    if (!App.elements.settingsPanel.contains(event.target) && !App.elements.settingsButton.contains(event.target)) {
+                    if (App.elements.settingsPanel.classList.contains('visible') && !App.elements.settingsPanel.contains(event.target)) {
                         App.elements.settingsPanel.classList.remove('visible');
                     }
                 });
