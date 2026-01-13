@@ -48,7 +48,7 @@ body {
     color: var(--text-color);
     display: flex;
     padding: 1vmin;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 .dashboard-container {
@@ -138,24 +138,34 @@ body {
         </section>
 
     </main>
-    <div class="action-button top-right" style="display: flex; align-items: center; padding: 5px 8px;" title="Opciones de la aplicación">
-        <span style="color: var(--text-color); margin-right: 8px; font-size: 14px;">debug</span>
-        <label class="switch" title="Activar/Desactivar Log de Depuración">
-            <input type="checkbox" id="debug-toggle-switch">
-            <span class="slider"></span>
-        </label>
-        <span style="color: var(--text-color); margin-left: 15px; margin-right: 8px; font-size: 14px;">darkmode</span>
-        <label class="switch" title="Activar/Desactivar Modo Oscuro">
-            <input type="checkbox" id="dark-mode-toggle-switch">
-            <span class="slider"></span>
-        </label>
-        <span style="color: var(--text-color); margin-left: 15px; margin-right: 8px; font-size: 14px;">fullscreen</span>
-        <label class="switch" title="Activar/Desactivar Pantalla Completa">
-            <input type="checkbox" id="fullscreen-toggle-switch">
-            <span class="slider"></span>
-        </label>
+    <div id="info-banner" class="info-banner" style="display: none;">
+        <p id="info-banner-text"></p>
+        <button id="info-banner-close">Aceptar</button>
     </div>
 
+    <div class="top-right-controls">
+        <button id="fullscreen-button" class="control-button" title="Pantalla Completa"></button>
+        <button id="settings-button" class="control-button" title="Ajustes"></button>
+    </div>
+
+    <div id="settings-panel" class="settings-panel" style="display: none;">
+        <div class="settings-content">
+            <div class="setting-item">
+                <span style="color: var(--text-color); margin-right: 8px; font-size: 14px;">debug</span>
+                <label class="switch" title="Activar/Desactivar Log de Depuración" aria-label="Activar/Desactivar Log de Depuración">
+                    <input type="checkbox" id="debug-toggle-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span style="color: var(--text-color); margin-right: 8px; font-size: 14px;">darkmode</span>
+                <label class="switch" title="Activar/Desactivar Modo Oscuro" aria-label="Activar/Desactivar Modo Oscuro">
+                    <input type="checkbox" id="dark-mode-toggle-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
     <script src="script.js" defer></script>
     <div id="debug-log" style="position: fixed; bottom: 0; left: 0; width: 100%; background-color: rgba(0,0,0,0.8); color: white; padding: 10px; font-family: monospace; font-size: 12px; max-height: 50vh; overflow-y: auto; z-index: 1000; display: none;"></div>
 </body>

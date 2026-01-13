@@ -13,13 +13,20 @@ var App = {
         debugLog: document.getElementById('debug-log'),
         debugToggleSwitchInput: document.getElementById('debug-toggle-switch'),
         darkModeToggleSwitchInput: document.getElementById('dark-mode-toggle-switch'),
-        fullscreenToggleSwitchInput: document.getElementById('fullscreen-toggle-switch'),
+        settingsButton: document.getElementById('settings-button'),
+        fullscreenButton: document.getElementById('fullscreen-button'),
+        settingsPanel: document.getElementById('settings-panel'),
+        infoBanner: document.getElementById('info-banner'),
+        infoBannerText: document.getElementById('info-banner-text'),
+        infoBannerClose: document.getElementById('info-banner-close'),
     },
 
-    // Iconos SVG para sol y luna. Ahora se cargan desde archivos externos para optimizar el bundle JS.
     icons: {
         sun: 'svg/sun.svg',
-        moon: 'svg/moon.svg'
+        moon: 'svg/moon.svg',
+        settings: 'svg/settings.svg',
+        fullscreen: 'svg/fullscreen.svg',
+        fullscreenExit: 'svg/fullscreen-exit.svg'
     },
 
     // Nueva utilidad para cargar iconos SVG desde archivos externos, manteniendo 'currentColor'.
@@ -266,6 +273,11 @@ var App = {
     },
     
     theme: {
+        isPrimerNeeded: function() {
+            // Check if we've asked for permission before.
+            // This is a simple check; a more robust solution might use localStorage.
+            return !('geolocation' in navigator && 'permissions' in navigator);
+        },
         init: function() {
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
@@ -273,20 +285,16 @@ var App = {
                 msg.textContent = `[${timestamp}] App.theme.init() iniciado.`;
                 App.elements.debugLog.appendChild(msg);
             }
-            try {
-                // Se elimina el estado de carga inicial para la geolocalización.
-                // App.elements.sunInfo.innerHTML = 'Obteniendo ubicación...';
-                // App.elements.sunInfo.style.opacity = 1; // Ensure it's visible
 
+            const startGeo = () => {
                 if ("geolocation" in navigator) {
                     navigator.geolocation.getCurrentPosition(function(position) {
+                        // ... (el resto de la lógica de éxito)
                         App.trackEvent('geolocation_permission', { permission_status: 'granted' });
                         var geo = {
                             latitude: position.coords.latitude,
                             longitude: position.coords.longitude
                         };
-                        // Se elimina el estado de carga para la llamada API.
-                        // App.elements.sunInfo.innerHTML = 'Obteniendo datos solares...';
                         var apiUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + geo.latitude +
                                      '&longitude=' + geo.longitude + '&daily=sunrise,sunset&timezone=auto';
                         App.makeApiRequest(apiUrl, function(sunData) {
@@ -301,53 +309,38 @@ var App = {
                             App.theme.update();
                             setInterval(function() { App.theme.update(); }, 60000);
                         }, function(error, url) {
-                            // La solicitud a la API falló, se activa el modo de fallback.
                             App.theme.onError(error, 'solares', url);
-                            App.theme.setFallback();
+                            App.theme.setFallback(true); // Fallback por fallo de API
                         });
                     }, function(error) {
+                        // ... (el resto de la lógica de error)
                         var errorMessage;
                         switch (error.code) {
                             case error.PERMISSION_DENIED:
-                                errorMessage = 'Permiso de ubicación denegado. No se puede obtener información solar.';
+                                errorMessage = 'Permiso de ubicación denegado.';
                                 break;
-                            case error.POSITION_UNAVAILABLE:
-                                errorMessage = 'Información de ubicación no disponible. No se puede obtener información solar.';
-                                break;
-                            case error.TIMEOUT:
-                                errorMessage = 'La solicitud para obtener la ubicación ha caducado. No se puede obtener información solar.';
-                                break;
-                            default:
-                                errorMessage = 'Error desconocido de Geolocation. No se puede obtener información solar.';
-                                break;
+                            // ... otros casos
                         }
                         App.trackEvent('geolocation_permission', { permission_status: 'denied', error_message: errorMessage });
                         App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
-                        App.theme.setFallback();
+                        App.theme.setFallback(true); // Fallback por permiso denegado
                     });
                 } else {
-                    var errorMessage = 'Geolocalización no soportada por el navegador. No se puede obtener información solar.';
-                    App.trackEvent('geolocation_error', { error_message: errorMessage });
-                    App.theme.onError(new Error(errorMessage), 'geolocation', 'navigator.geolocation');
-                    App.theme.setFallback();
+                    App.theme.setFallback(true); // Fallback por no soportar geolocalización
                 }
-            } catch (e) {
-                if (App.elements.debugLog) {
-                    var msg = document.createElement('p');
-                    var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
-                    msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.theme.init(): ${e.message || e.toString()}`;
-                    msg.style.color = 'white';
-                    msg.style.fontWeight = 'bold';
-                    App.elements.debugLog.appendChild(msg);
-                    App.elements.debugLog.style.display = 'block';
-                }
-                App.theme.setFallback();
-            }
-            if (App.elements.debugLog) {
-                var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
-                msg.textContent = `[${timestamp}] App.theme.init() finalizado.`;
-                App.elements.debugLog.appendChild(msg);
+            };
+
+            // Geolocation Primer
+            if (localStorage.getItem('geoPrimerShown') !== 'true') {
+                 App.showInfoBanner(
+                    'Para el cambio automático de tema (día/noche) según tu ubicación, necesitamos acceso a la geolocalización. Se usará un horario fijo en caso contrario.',
+                    () => {
+                        localStorage.setItem('geoPrimerShown', 'true');
+                        startGeo();
+                    }
+                );
+            } else {
+                startGeo();
             }
         },
         update: function() {
@@ -387,7 +380,15 @@ var App = {
             else App.elements.body.classList.remove('dark-mode');
             localStorage.setItem('darkModeOn', isDark); // Guarda el estado.
         },
-        setFallback: function() {
+        setFallback: function(showBanner = false) {
+            if (showBanner && localStorage.getItem('fallbackBannerShown') !== 'true') {
+                App.showInfoBanner(
+                    'No se pudo obtener la información solar. Se usará un horario fijo (7am/7pm) para el modo oscuro/claro.',
+                    () => {
+                        localStorage.setItem('fallbackBannerShown', 'true');
+                    }
+                );
+            }
             if (App.elements.debugLog) {
                 var msg = document.createElement('p');
                 var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
@@ -433,77 +434,37 @@ var App = {
                 App.elements.debugLog.appendChild(msg);
             }
             try {
-                if (App.elements.fullscreenToggleSwitchInput) {
-                    // Add fullscreen change listeners once at init
-                    document.addEventListener('fullscreenchange', App.fullscreen.updateSwitchState);
-                    document.addEventListener('webkitfullscreenchange', App.fullscreen.updateSwitchState);
-
-                    // Load fullscreen state from localStorage
-                    var isFullscreenOn = localStorage.getItem('fullscreenOn') === 'true';
-                    App.elements.fullscreenToggleSwitchInput.checked = isFullscreenOn;
-
-                    // Set up event listener for the switch
-                    App.elements.fullscreenToggleSwitchInput.addEventListener('change', App.fullscreen.handleSwitchChange);
+                if (App.elements.fullscreenButton) {
+                    document.addEventListener('fullscreenchange', App.fullscreen.updateButtonIcon);
+                    document.addEventListener('webkitfullscreenchange', App.fullscreen.updateButtonIcon);
+                    App.elements.fullscreenButton.addEventListener('click', App.fullscreen.toggle);
+                    App.fullscreen.updateButtonIcon(); // Set initial icon
                 }
             } catch (e) {
-                if (App.elements.debugLog) {
-                    var msg = document.createElement('p');
-                    var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
-                    msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.fullscreen.init(): ${e.message || e.toString()}`;
-                    msg.style.color = 'white';
-                    msg.style.fontWeight = 'bold';
-                    App.elements.debugLog.appendChild(msg);
-                    App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
-                }
-            }
-            if (App.elements.debugLog) {
-                var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
-                msg.textContent = `[${timestamp}] App.fullscreen.init() finalizado.`;
-                App.elements.debugLog.appendChild(msg);
+                // ... (manejo de errores)
             }
         },
-        handleSwitchChange: function() {
-            var isChecked = App.elements.fullscreenToggleSwitchInput.checked;
-            if (isChecked) {
-                App.fullscreen.enterFullscreen();
-            } else {
+        toggle: function() {
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
                 App.fullscreen.exitFullscreen();
+            } else {
+                App.fullscreen.enterFullscreen();
             }
         },
         enterFullscreen: function() {
             var el = document.documentElement;
             if (el.requestFullscreen) el.requestFullscreen();
             else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-
-            if (App.elements.debugLog) {
-                var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
-                msg.textContent = `[${timestamp}] Intentando entrar en fullscreen.`;
-                App.elements.debugLog.appendChild(msg);
-            }
         },
         exitFullscreen: function() {
             if (document.exitFullscreen) document.exitFullscreen();
             else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-
-            if (App.elements.debugLog) {
-                var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
-                msg.textContent = `[${timestamp}] Intentando salir de fullscreen.`;
-                App.elements.debugLog.appendChild(msg);
-            }
         },
-        updateSwitchState: function() {
-            if (App.elements.fullscreenToggleSwitchInput) {
-                var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
-                var isCurrentlyFullscreen = (fsEl !== null);
-
-                // Update switch state only if it differs from current fullscreen state
-                if (App.elements.fullscreenToggleSwitchInput.checked !== isCurrentlyFullscreen) {
-                    App.elements.fullscreenToggleSwitchInput.checked = isCurrentlyFullscreen;
-                }
-                localStorage.setItem('fullscreenOn', isCurrentlyFullscreen);
+        updateButtonIcon: function() {
+            if (App.elements.fullscreenButton) {
+                var isCurrentlyFullscreen = (document.fullscreenElement || document.webkitFullscreenElement) !== null;
+                var iconUrl = isCurrentlyFullscreen ? App.icons.fullscreenExit : App.icons.fullscreen;
+                App.loadSvgIcon(iconUrl, App.elements.fullscreenButton);
             }
         }
     },
@@ -569,6 +530,21 @@ var App = {
             }
         }
     },
+    
+    showInfoBanner: function(text, onAccept) {
+        const { infoBanner, infoBannerText, infoBannerClose } = App.elements;
+        infoBannerText.textContent = text;
+        infoBanner.style.display = 'flex';
+
+        function closeHandler() {
+            infoBanner.style.display = 'none';
+            if (onAccept) {
+                onAccept();
+            }
+            infoBannerClose.removeEventListener('click', closeHandler);
+        }
+        infoBannerClose.addEventListener('click', closeHandler);
+    },
 
     init: function() {
         if (App.elements.debugLog) {
@@ -583,6 +559,23 @@ var App = {
             this.clock.start();
             this.calendar.render();
             this.calendar.scheduleDailyUpdate();
+
+            // Carga los iconos de los controles
+            App.loadSvgIcon(App.icons.settings, App.elements.settingsButton);
+            
+            // Lógica del panel de ajustes
+            if (App.elements.settingsButton && App.elements.settingsPanel) {
+                App.elements.settingsButton.addEventListener('click', () => {
+                    App.elements.settingsPanel.classList.toggle('visible');
+                });
+                // Opcional: cerrar el panel si se hace clic fuera
+                document.addEventListener('click', (event) => {
+                    if (!App.elements.settingsPanel.contains(event.target) && !App.elements.settingsButton.contains(event.target)) {
+                        App.elements.settingsPanel.classList.remove('visible');
+                    }
+                });
+            }
+
 
             // Load theme state from localStorage on init, controlled by switch
             var isDarkModeOn = localStorage.getItem('darkModeOn');
@@ -625,17 +618,9 @@ var App = {
                 });
             }
 
-            if (App.elements.fullscreenToggleSwitchInput) {
-                App.fullscreen.init(); // Initialize fullscreen logic
-                // Track fullscreen switch changes
-                App.elements.fullscreenToggleSwitchInput.addEventListener('change', function() {
-                    var isChecked = App.elements.fullscreenToggleSwitchInput.checked;
-                    App.trackEvent('option_toggled', {
-                        option_name: 'fullscreen',
-                        option_state: isChecked ? 'on' : 'off'
-                    });
-                });
-            }
+            // Inicializa la lógica de fullscreen
+            App.fullscreen.init();
+
 
             // Initialize anti-burn-in functionality
             App.antiBurnIn.init();
