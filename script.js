@@ -588,9 +588,8 @@ var App = {
             // Lógica del botón de debug
             if (App.elements.debugButton) {
                 App.elements.debugButton.addEventListener('click', () => {
-                    var isDebugOn = App.elements.debugLog.style.display === 'block';
-                    isDebugOn = !isDebugOn;
-                    App.elements.debugLog.style.display = isDebugOn ? 'block' : 'none';
+                    App.elements.debugLog.classList.toggle('debug-log-visible');
+                    var isDebugOn = App.elements.debugLog.classList.contains('debug-log-visible');
                     localStorage.setItem('debugLogOn', isDebugOn);
                     App.trackEvent('option_toggled', {
                         option_name: 'debug',

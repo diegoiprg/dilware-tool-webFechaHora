@@ -191,6 +191,32 @@
     cursor: pointer;
 }
 
+#sun-info {
+    display: flex;
+    flex-direction: row; /* Align items horizontally */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    font-size: 3.5vmin;
+    font-weight: 500;
+    margin-top: 2.5vmin; /* Keep some margin from clock */
+    color: var(--secondary-text-color);
+    opacity: 0; /* Will be set to 1 by JS when content is ready */
+    letter-spacing: 0.05em;
+    transition: color 0.5s ease, opacity 0.5s ease;
+    pointer-events: none;
+}
+
+#sun-info .sun-moon-icon svg {
+    width: 1em; /* Match font size */
+    height: 1em; /* Match font size */
+    margin-right: 0.5em; /* Spacing between icon and time */
+    stroke-width: 1.5; /* Default stroke-width for icons */
+}
+
 #debug-log {
     display: none !important; /* Force hide by default */
+}
+
+#debug-log.debug-log-visible {
+    display: block !important;
 }
