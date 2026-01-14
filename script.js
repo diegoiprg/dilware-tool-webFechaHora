@@ -25,8 +25,8 @@ var App = {
         bug: 'svg/debug.svg', // Changed to debug.svg
         fullscreen: 'svg/fullscreen.svg',
         fullscreenExit: 'svg/fullscreen-exit.svg',
-        lightbulbOn: 'svg/lightbulb-on.svg',
-        lightbulbOff: 'svg/lightbulb-off.svg'
+        lightbulbOn: 'svg/lightbulb-solid-full.svg',
+        lightbulbOff: 'svg/lightbulb-regular-full.svg'
     },
 
     // Nueva utilidad para cargar iconos SVG desde archivos externos, manteniendo 'currentColor'.
@@ -569,7 +569,7 @@ var App = {
             
                                     var initialDarkModeState = App.theme.applyInitialTheme(); // Apply initial theme and get state
                                     if (App.elements.darkModeButton) {
-                                        App.loadSvgIcon(initialDarkModeState ? App.icons.lightbulbOff : App.icons.lightbulbOn, App.elements.darkModeButton);
+                                        App.loadSvgIcon(initialDarkModeState ? App.icons.lightbulbOn : App.icons.lightbulbOff, App.elements.darkModeButton);
                                     
                                         App.elements.darkModeButton.addEventListener('click', () => {
                                             var isDarkModeOn = App.elements.body.classList.contains('dark-mode');
@@ -581,7 +581,7 @@ var App = {
                                                 option_state: isDarkModeOn ? 'on' : 'off'
                                             });
                                             // Load icon representing the current theme state (lightbulbOff for dark mode, lightbulbOn for light mode)
-                                            App.loadSvgIcon(isDarkModeOn ? App.icons.lightbulbOff : App.icons.lightbulbOn, App.elements.darkModeButton);
+                                            App.loadSvgIcon(isDarkModeOn ? App.icons.lightbulbOn : App.icons.lightbulbOff, App.elements.darkModeButton);
                                         });
                                     }
             // Carga el icono de debug
