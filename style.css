@@ -94,6 +94,7 @@ body {
     margin-right: 0.5em; /* Spacing between icon and time */
     stroke-width: 1.5; /* Default stroke-width for icons */
     vertical-align: middle; /* Ensure vertical alignment */
+    display: block; /* Ensures consistent box model for alignment */
 }
 
 .sun-time-text {
