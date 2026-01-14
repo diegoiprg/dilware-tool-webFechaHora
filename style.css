@@ -248,6 +248,8 @@ body {
     width: 100%;
     height: 100%;
     stroke-width: 1.5;
+    fill: currentColor; /* Ensure fill color matches text color */
+    stroke: currentColor; /* Ensure stroke color matches text color */
 }
 
 .info-banner {
