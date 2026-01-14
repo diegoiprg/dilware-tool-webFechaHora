@@ -75,16 +75,24 @@ body {
 
 #sun-info {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row; /* Align items horizontally */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
     font-size: 3.5vmin;
     font-weight: 500;
-    margin-top: 2.5vmin;
+    margin-top: 2.5vmin; /* Keep some margin from clock */
     color: var(--secondary-text-color);
     opacity: 0; /* Will be set to 1 by JS when content is ready */
     letter-spacing: 0.05em;
     transition: color 0.5s ease, opacity 0.5s ease;
     pointer-events: none;
+}
+
+#sun-info .sun-moon-icon svg {
+    width: 1em; /* Match font size */
+    height: 1em; /* Match font size */
+    margin-right: 0.5em; /* Spacing between icon and time */
+    stroke-width: 1.5; /* Default stroke-width for icons */
 }
 
 .action-button {
@@ -103,6 +111,7 @@ body {
     top: 10px;
     right: 10px;
 }
+
 /*
   Hoja de estilos final.
   Versión 14: Ajustes finales de UI/UX.
@@ -140,7 +149,7 @@ body {
     width: 100%;
     max-width: 450px;
     margin-bottom: 2.5vmin;
-    font-size: 4vmin;
+    font-size: max(20px, 4vmin); /* Ensure a minimum size */
     color: var(--secondary-text-color);
     transition: color 0.5s ease, max-width 0.5s ease;
 }
@@ -154,7 +163,7 @@ body {
 .calendar-title:active { transform: scale(0.95); }
 
 .nav-arrow {
-    font-size: 6vmin;
+    font-size: max(24px, 6vmin); /* Ensure a minimum size */
     font-weight: 300;
     cursor: pointer;
     padding: 1vmin 3vmin;
@@ -200,12 +209,6 @@ body {
     font-weight: 700;
     border-radius: 50%;
 }
-
-/* --- Action Button Styling --- */
-.action-button:hover {
-    background-color: transparent; /* Remove hover effect from container */
-}
-
 
 
 /* --- New Control Styles --- */
@@ -256,22 +259,6 @@ body {
     box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
 }
 
-.info-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #333;
-    color: white;
-    padding: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    z-index: 1010;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
-}
-
 .info-banner p {
     margin: 0;
     margin-right: 15px;
@@ -286,27 +273,6 @@ body {
     cursor: pointer;
 }
 
-#sun-info {
-    display: flex;
-    flex-direction: row; /* Align items horizontally */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    font-size: 3.5vmin;
-    font-weight: 500;
-    margin-top: 2.5vmin; /* Keep some margin from clock */
-    color: var(--secondary-text-color);
-    opacity: 0; /* Will be set to 1 by JS when content is ready */
-    letter-spacing: 0.05em;
-    transition: color 0.5s ease, opacity 0.5s ease;
-    pointer-events: none;
-}
-
-#sun-info .sun-moon-icon svg {
-    width: 1em; /* Match font size */
-    height: 1em; /* Match font size */
-    margin-right: 0.5em; /* Spacing between icon and time */
-    stroke-width: 1.5; /* Default stroke-width for icons */
-}
 
 #debug-log {
     display: none !important; /* Force hide by default */
@@ -314,4 +280,14 @@ body {
 
 #debug-log.debug-log-visible {
     display: block !important;
+}
+
+/* --- Estilos para pantallas grandes --- */
+@media (min-width: 768px) {
+    #calendar-header, #calendar-grid { max-width: 600px; grid-gap: 2vmin; }
+    #calendar-header { font-size: 26px; }
+    .nav-arrow { font-size: 36px; }
+    .calendar-cell { font-size: 18px; }
+    #sun-info { font-size: 36px; } /* Increased again */
+    #sun-info svg { width: 25px; height: 25px; margin-right: 10px; } /* Ajustado */
 }
