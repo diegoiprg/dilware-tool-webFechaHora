@@ -12,12 +12,8 @@ var App = {
         calendarGrid: document.getElementById('calendar-grid'),
         debugLog: document.getElementById('debug-log'),
         debugButton: document.getElementById('debug-button'),
+        darkModeButton: document.getElementById('dark-mode-button'),
         fullscreenButton: document.getElementById('fullscreen-button'),
-        // New Dark Mode Switch Elements
-        darkModeSwitchContainer: document.getElementById('dark-mode-switch-container'),
-        darkModeSwitchSun: document.getElementById('dark-mode-switch-sun'),
-        darkModeSwitchMoon: document.getElementById('dark-mode-switch-moon'),
-        darkModeSwitchThumb: document.getElementById('dark-mode-switch-thumb'),
         infoBanner: document.getElementById('info-banner'),
         infoBannerText: document.getElementById('info-banner-text'),
         infoBannerClose: document.getElementById('info-banner-close'),
@@ -51,7 +47,6 @@ var App = {
                     msg.style.color = 'white';
                     msg.style.fontWeight = 'bold';
                     App.elements.debugLog.appendChild(msg);
-                    App.elements.debugLog.style.display = 'block';
                 }
                 targetElement.innerHTML = ''; // Clear icon on error
             });
@@ -151,7 +146,6 @@ var App = {
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.clock.start(): ${e.message || e.toString()}`;
                     msg.style.color = 'red';
                     App.elements.debugLog.appendChild(msg);
-                    App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
                 }
             }
             if (App.elements.debugLog) {
@@ -226,7 +220,6 @@ var App = {
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.calendar.render(): ${e.message || e.toString()}`;
                     msg.style.color = 'red';
                     App.elements.debugLog.appendChild(msg);
-                    App.elements.debugLog.style.display = 'block'; // Ensure log is visible for critical errors
                 }
             }
             if (App.elements.debugLog) {
@@ -285,6 +278,16 @@ var App = {
             // Check if we've asked for permission before.
             // This is a simple check; a more robust solution might use localStorage.
             return !('geolocation' in navigator && 'permissions' in navigator);
+        },
+        applyInitialTheme: function() {
+            var isDarkModeOn = localStorage.getItem('darkModeOn');
+            if (isDarkModeOn === null) { // If no saved state, use system preference
+                isDarkModeOn = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            } else {
+                isDarkModeOn = (isDarkModeOn === 'true');
+            }
+            this.set(isDarkModeOn); // Apply initial theme to body
+            return isDarkModeOn; // Return the initial state
         },
         init: function() {
             if (App.elements.debugLog) {
@@ -498,16 +501,9 @@ var App = {
                     var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
                     msg.textContent = `[${timestamp}] ERROR CRÍTICO en App.antiBurnIn.init(): ${e.message || e.toString()}`;
                     msg.style.color = 'white';
-                    msg.style.fontWeight = 'bold';
+                    msg.fontWeight = 'bold';
                     App.elements.debugLog.appendChild(msg);
-                    App.elements.debugLog.style.display = 'block';
                 }
-            }
-            if (App.elements.debugLog) {
-                var msg = document.createElement('p');
-                var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
-                msg.textContent = `[${timestamp}] App.antiBurnIn.init() finalizado.`;
-                App.elements.debugLog.appendChild(msg);
             }
         },
         shiftElements: function() {
@@ -566,11 +562,28 @@ var App = {
         try {
             this.clock.start();
             this.calendar.render();
-            this.calendar.scheduleDailyUpdate();
+                        this.calendar.scheduleDailyUpdate();
+            
+                        var initialDarkModeState = App.theme.applyInitialTheme(); // Apply initial theme and get state
+                        if (App.elements.darkModeButton) {
+                            App.loadSvgIcon(initialDarkModeState ? App.icons.moon : App.icons.sun, App.elements.darkModeButton);
+            
+                            App.elements.darkModeButton.addEventListener('click', () => {
+                                var isDarkModeOn = App.elements.body.classList.contains('dark-mode');
+                                isDarkModeOn = !isDarkModeOn; // Flip the state
+                                App.theme.set(isDarkModeOn); // Apply new theme (adds/removes 'dark-mode' class)
+                                localStorage.setItem('darkModeOn', isDarkModeOn); // Store new state
+                                App.trackEvent('option_toggled', {
+                                    option_name: 'dark_mode',
+                                    option_state: isDarkModeOn ? 'on' : 'off'
+                                });
+                                // Load icon representing the current theme state
+                                App.loadSvgIcon(isDarkModeOn ? App.icons.moon : App.icons.sun, App.elements.darkModeButton);
+                            });
+                        }
 
-            // Carga los iconos de los controles
-            App.fullscreen.updateButtonIcon(); // Carga el icono inicial de fullscreen
-            App.loadSvgIcon(App.icons.bug, App.elements.debugButton); // Carga el icono inicial de debug
+            // Carga el icono de debug
+            App.loadSvgIcon(App.icons.bug, App.elements.debugButton);
 
             // Lógica del botón de debug
             if (App.elements.debugButton) {
@@ -584,51 +597,12 @@ var App = {
                         option_state: isDebugOn ? 'on' : 'off'
                     });
                 });
-                // Cargar estado inicial del debug
-                var isDebugLogOn = localStorage.getItem('debugLogOn') === 'true';
-                App.elements.debugLog.style.display = isDebugLogOn ? 'block' : 'none';
             }
-
-            // Dark Mode Switch Logic
-            if (App.elements.darkModeSwitchContainer) {
-                // Load sun and moon icons once
-                App.loadSvgIcon(App.icons.sun, App.elements.darkModeSwitchSun);
-                App.loadSvgIcon(App.icons.moon, App.elements.darkModeSwitchMoon);
-
-                const updateDarkModeSwitch = (isDark) => {
-                    if (isDark) {
-                        App.elements.darkModeSwitchContainer.classList.add('dark');
-                    } else {
-                        App.elements.darkModeSwitchContainer.classList.remove('dark');
-                    }
-                };
-
-                App.elements.darkModeSwitchContainer.addEventListener('click', () => {
-                    var isDarkModeOn = App.elements.body.classList.contains('dark-mode');
-                    isDarkModeOn = !isDarkModeOn; // Flip the state
-                    App.theme.set(isDarkModeOn); // Apply new theme (adds/removes 'dark-mode' class)
-                    localStorage.setItem('darkModeOn', isDarkModeOn); // Store new state
-                    App.trackEvent('option_toggled', {
-                        option_name: 'dark_mode',
-                        option_state: isDarkModeOn ? 'on' : 'off'
-                    });
-                    updateDarkModeSwitch(isDarkModeOn);
-                });
-
-                // Cargar estado inicial del dark mode y actualizar el switch
-                var isDarkModeOn = localStorage.getItem('darkModeOn');
-                if (isDarkModeOn === null) { // If no saved state, use system preference
-                    isDarkModeOn = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                } else {
-                    isDarkModeOn = (isDarkModeOn === 'true');
-                }
-                updateDarkModeSwitch(isDarkModeOn);
-            }
-            
-            this.theme.init(); // This now mainly calls APIs and updates sun info, not initial theme
 
             // Inicializa la lógica de fullscreen
             App.fullscreen.init();
+            
+            this.theme.init(); // This now mainly calls APIs and updates sun info
 
 
             // Initialize anti-burn-in functionality

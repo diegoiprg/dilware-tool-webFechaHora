@@ -111,64 +111,7 @@
     background-color: transparent; /* Remove hover effect from container */
 }
 
-/* --- Toggle Switch Styling --- */
-/* The switch - the box around the slider */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px; /* Larger width */
-    height: 26px; /* Larger height */
-    margin-left: 10px; /* Spacing from text/other elements */
-    vertical-align: middle; /* Align with text */
-}
 
-/* Hide default HTML checkbox */
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-/* The slider */
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--secondary-text-color); /* Use theme secondary text color */
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 26px; /* Rounder slider to match new height */
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 20px; /* Larger thumb */
-    width: 20px; /* Larger thumb */
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 50%; /* Round thumb */
-}
-
-input:checked + .slider {
-    background-color: var(--primary-color); /* Theme accent color */
-}
-
-input:focus + .slider {
-    box-shadow: 0 0 1px var(--primary-color);
-}
-
-input:checked + .slider:before {
-    -webkit-transform: translateX(24px); /* Move thumb to right to match new size */
-    -ms-transform: translateX(24px);
-    transform: translateX(24px);
-}
 
 /* --- New Control Styles --- */
 .top-right-controls {
@@ -202,74 +145,20 @@ input:checked + .slider:before {
     stroke-width: 1.5;
 }
 
-.dark-mode-switch-container {
-    width: 100px;
-    height: 44px; /* Adjust height to match control buttons */
-    background-color: var(--secondary-text-color);
-    border-radius: 22px; /* Half of height for pill shape */
-    position: relative; /* For absolute positioning of thumb and visible icons */
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-    margin-right: 8px; /* Gap between this switch and the next button */
-    overflow: hidden; /* Ensure icons don't overflow container */
-}
-
-.dark-mode-switch-visible-icon {
-    position: absolute;
-    width: 24px; /* Smaller than thumb to be visible around it */
-    height: 24px; /* Smaller than thumb to be visible around it */
-    top: 10px; /* Vertically center (44px container - 24px icon = 20px, 10px top/bottom) */
+.info-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    padding: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1; /* Below thumb */
-    transition: color 0.3s ease, fill 0.3s ease, stroke 0.3s ease; /* For icon color change */
-}
-
-/* Position sun icon on the left */
-#dark-mode-sun-icon {
-    left: 10px; /* 3px (thumb left) + (38px (thumb) - 24px (icon)) / 2 = 10px */
-}
-
-/* Position moon icon on the right */
-#dark-mode-moon-icon {
-    left: 66px; /* 59px (thumb right) + (38px (thumb) - 24px (icon)) / 2 = 66px */
-}
-
-.dark-mode-switch-visible-icon svg {
-    width: 100%; /* Fill the smaller icon container */
-    height: 100%; /* Fill the smaller icon container */
-    /* Default color from theme (text-color) */
-    fill: var(--text-color);
-    stroke: var(--text-color);
-}
-
-.dark-mode-switch-thumb {
-    width: 38px;
-    height: 38px;
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    position: absolute;
-    top: 3px;
-    left: 3px; /* Initial position for sun */
-    transition: transform 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    z-index: 2; /* Above icons */
-}
-
-.dark-mode-switch-container.dark .dark-mode-switch-thumb {
-    transform: translateX(56px); /* Moves to align with moon icon (3px left + 56px = 59px) */
-}
-
-/* Color of icons when they are "active" (under the thumb) */
-.dark-mode-switch-container.light #dark-mode-sun-icon svg {
-    fill: white;
-    stroke: white;
-}
-.dark-mode-switch-container.dark #dark-mode-moon-icon svg {
-    fill: white;
-    stroke: white;
+    text-align: center;
+    z-index: 1010;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
 }
 
 .info-banner {
@@ -300,4 +189,8 @@ input:checked + .slider:before {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+#debug-log {
+    display: none !important; /* Force hide by default */
 }
