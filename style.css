@@ -262,7 +262,7 @@ input:checked + .slider:before {
 }
 
 .dark-mode-switch-container.dark .dark-mode-switch-thumb {
-    transform: translateX(56px); /* Move to right for moon */
+    transform: translateX(52px); /* Move to right for moon, adjusted for centering */
 }
 
 .info-banner {

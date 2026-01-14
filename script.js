@@ -26,7 +26,7 @@ var App = {
     icons: {
         sun: 'svg/sun.svg',
         moon: 'svg/moon.svg',
-        bug: 'svg/bug.svg', // Added bug icon
+        bug: 'svg/debug.svg', // Changed to debug.svg
         fullscreen: 'svg/fullscreen.svg',
         fullscreenExit: 'svg/fullscreen-exit.svg'
     },
@@ -557,7 +557,7 @@ var App = {
     init: function() {
         if (App.elements.debugLog) {
             // Ensure debug log is hidden by default, before any other logic or messages
-            App.elements.debugLog.style.display = 'none';
+            App.elements.debugLog.style.display = 'none'; // Added this line
             var msg = document.createElement('p');
             var timestamp = new Date().toLocaleTimeString('es-ES', { hour12: false });
             msg.textContent = `[${timestamp}] App.init() iniciado.`;
