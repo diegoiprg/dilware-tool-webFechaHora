@@ -202,18 +202,64 @@ input:checked + .slider:before {
     stroke-width: 1.5;
 }
 
-.control-group {
+.dark-mode-switch-container {
+    width: 100px;
+    height: 44px; /* Adjust height to match control buttons */
+    background-color: var(--secondary-text-color);
+    border-radius: 22px; /* Half of height for pill shape */
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 2px;
+    justify-content: space-between;
+    padding: 0 5px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
 }
 
-.control-label {
-    font-size: 10px;
-    color: var(--text-color);
-    transition: color 0.5s ease;
+.dark-mode-switch-icon {
+    width: 32px; /* Adjust icon size */
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
 }
+
+.dark-mode-switch-icon svg {
+    width: 80%;
+    height: 80%;
+    stroke: white; /* Default icon color */
+    fill: white;
+    transition: stroke 0.2s ease, fill 0.2s ease;
+}
+
+.dark-mode-switch-thumb {
+    width: 38px; /* Slightly smaller than container height to allow padding */
+    height: 38px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    position: absolute;
+    top: 3px; /* Center vertically */
+    left: 3px; /* Initial position for sun */
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.dark-mode-switch-container.dark .dark-mode-switch-thumb {
+    transform: translateX(56px); /* Move to right for moon */
+}
+
+/* Ensure icons are visible and colored based on state */
+.dark-mode-switch-container.dark .moon-icon svg {
+    stroke: white;
+    fill: white;
+}
+.dark-mode-switch-container.light .sun-icon svg {
+    stroke: white;
+    fill: white;
+}
+
 
 .info-banner {
     position: fixed;

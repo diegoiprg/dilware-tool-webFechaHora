@@ -12,8 +12,12 @@ var App = {
         calendarGrid: document.getElementById('calendar-grid'),
         debugLog: document.getElementById('debug-log'),
         debugButton: document.getElementById('debug-button'),
-        darkModeButton: document.getElementById('dark-mode-button'),
         fullscreenButton: document.getElementById('fullscreen-button'),
+        // New Dark Mode Switch Elements
+        darkModeSwitchContainer: document.getElementById('dark-mode-switch-container'),
+        darkModeSwitchSun: document.getElementById('dark-mode-switch-sun'),
+        darkModeSwitchMoon: document.getElementById('dark-mode-switch-moon'),
+        darkModeSwitchThumb: document.getElementById('dark-mode-switch-thumb'),
         infoBanner: document.getElementById('info-banner'),
         infoBannerText: document.getElementById('info-banner-text'),
         infoBannerClose: document.getElementById('info-banner-close'),
@@ -567,9 +571,8 @@ var App = {
             // Carga los iconos de los controles
             App.fullscreen.updateButtonIcon(); // Carga el icono inicial de fullscreen
             App.loadSvgIcon(App.icons.bug, App.elements.debugButton); // Carga el icono inicial de debug
-            App.loadSvgIcon(App.icons.moon, App.elements.darkModeButton); // Carga el icono inicial de dark mode
 
-            // Lógica de los botones de control
+            // Lógica del botón de debug
             if (App.elements.debugButton) {
                 App.elements.debugButton.addEventListener('click', () => {
                     var isDebugOn = App.elements.debugLog.style.display === 'block';
@@ -580,36 +583,46 @@ var App = {
                         option_name: 'debug',
                         option_state: isDebugOn ? 'on' : 'off'
                     });
-                    // Opcional: Cambiar el estilo del icono de depuración si es necesario.
-                    // App.elements.debugButton.classList.toggle('active', isDebugOn);
                 });
                 // Cargar estado inicial del debug
                 var isDebugLogOn = localStorage.getItem('debugLogOn') === 'true';
                 App.elements.debugLog.style.display = isDebugLogOn ? 'block' : 'none';
             }
 
-            if (App.elements.darkModeButton) {
-                App.elements.darkModeButton.addEventListener('click', () => {
+            // Dark Mode Switch Logic
+            if (App.elements.darkModeSwitchContainer) {
+                // Load sun and moon icons once
+                App.loadSvgIcon(App.icons.sun, App.elements.darkModeSwitchSun);
+                App.loadSvgIcon(App.icons.moon, App.elements.darkModeSwitchMoon);
+
+                const updateDarkModeSwitch = (isDark) => {
+                    if (isDark) {
+                        App.elements.darkModeSwitchContainer.classList.add('dark');
+                    } else {
+                        App.elements.darkModeSwitchContainer.classList.remove('dark');
+                    }
+                };
+
+                App.elements.darkModeSwitchContainer.addEventListener('click', () => {
                     var isDarkModeOn = App.elements.body.classList.contains('dark-mode');
-                    isDarkModeOn = !isDarkModeOn;
-                    App.theme.set(isDarkModeOn);
-                    localStorage.setItem('darkModeOn', isDarkModeOn);
+                    isDarkModeOn = !isDarkModeOn; // Flip the state
+                    App.theme.set(isDarkModeOn); // Apply new theme (adds/removes 'dark-mode' class)
+                    localStorage.setItem('darkModeOn', isDarkModeOn); // Store new state
                     App.trackEvent('option_toggled', {
                         option_name: 'dark_mode',
                         option_state: isDarkModeOn ? 'on' : 'off'
                     });
-                    // Force re-render of the icon and apply correct logic
-                    App.elements.darkModeButton.innerHTML = ''; // Clear current icon
-                    App.loadSvgIcon(isDarkModeOn ? App.icons.sun : App.icons.moon, App.elements.darkModeButton);
+                    updateDarkModeSwitch(isDarkModeOn);
                 });
-                // Cargar estado inicial del dark mode
+
+                // Cargar estado inicial del dark mode y actualizar el switch
                 var isDarkModeOn = localStorage.getItem('darkModeOn');
-                if (isDarkModeOn === null) {
+                if (isDarkModeOn === null) { // If no saved state, use system preference
                     isDarkModeOn = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
                 } else {
                     isDarkModeOn = (isDarkModeOn === 'true');
                 }
-                App.loadSvgIcon(isDarkModeOn ? App.icons.sun : App.icons.moon, App.elements.darkModeButton);
+                updateDarkModeSwitch(isDarkModeOn);
             }
             
             this.theme.init(); // This now mainly calls APIs and updates sun info, not initial theme

@@ -144,18 +144,13 @@ body {
     </div>
 
     <div class="top-right-controls">
-        <div class="control-group">
-            <button id="debug-button" class="control-button" title="Alternar Depuración"></button>
-            <span class="control-label">Debug</span>
+        <div id="dark-mode-switch-container" class="dark-mode-switch-container control-group" title="Alternar Modo Oscuro">
+            <div id="dark-mode-switch-sun" class="dark-mode-switch-icon"></div>
+            <div id="dark-mode-switch-thumb" class="dark-mode-switch-thumb"></div>
+            <div id="dark-mode-switch-moon" class="dark-mode-switch-icon"></div>
         </div>
-        <div class="control-group">
-            <button id="dark-mode-button" class="control-button" title="Alternar Modo Oscuro"></button>
-            <span class="control-label">Modo Oscuro</span>
-        </div>
-        <div class="control-group">
-            <button id="fullscreen-button" class="control-button" title="Pantalla Completa"></button>
-            <span class="control-label">Pantalla Completa</span>
-        </div>
+        <button id="debug-button" class="control-button" title="Depuración"></button>
+        <button id="fullscreen-button" class="control-button" title="Pantalla Completa"></button>
     </div>
 
     <script src="script.js" defer></script>
