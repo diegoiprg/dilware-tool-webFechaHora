@@ -93,6 +93,12 @@ body {
     height: 1em; /* Match font size */
     margin-right: 0.5em; /* Spacing between icon and time */
     stroke-width: 1.5; /* Default stroke-width for icons */
+    vertical-align: middle; /* Ensure vertical alignment */
+}
+
+.sun-time-text {
+    vertical-align: middle; /* Ensure vertical alignment */
+    line-height: 1; /* Normalize line height */
 }
 
 .action-button {

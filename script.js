@@ -24,7 +24,9 @@ var App = {
         moon: 'svg/moon.svg',
         bug: 'svg/debug.svg', // Changed to debug.svg
         fullscreen: 'svg/fullscreen.svg',
-        fullscreenExit: 'svg/fullscreen-exit.svg'
+        fullscreenExit: 'svg/fullscreen-exit.svg',
+        lightbulbOn: 'svg/lightbulb-on.svg',
+        lightbulbOff: 'svg/lightbulb-off.svg'
     },
 
     // Nueva utilidad para cargar iconos SVG desde archivos externos, manteniendo 'currentColor'.
@@ -381,6 +383,7 @@ var App = {
             
             // Agrega el texto de la hora.
             var timeSpan = document.createElement('span');
+            timeSpan.className = 'sun-time-text'; /* Add this class for targeting */
             timeSpan.textContent = hours + ':' + minutes;
             App.elements.sunInfo.appendChild(timeSpan);
             
@@ -564,24 +567,23 @@ var App = {
             this.calendar.render();
                         this.calendar.scheduleDailyUpdate();
             
-                        var initialDarkModeState = App.theme.applyInitialTheme(); // Apply initial theme and get state
-                        if (App.elements.darkModeButton) {
-                            App.loadSvgIcon(initialDarkModeState ? App.icons.moon : App.icons.sun, App.elements.darkModeButton);
-            
-                            App.elements.darkModeButton.addEventListener('click', () => {
-                                var isDarkModeOn = App.elements.body.classList.contains('dark-mode');
-                                isDarkModeOn = !isDarkModeOn; // Flip the state
-                                App.theme.set(isDarkModeOn); // Apply new theme (adds/removes 'dark-mode' class)
-                                localStorage.setItem('darkModeOn', isDarkModeOn); // Store new state
-                                App.trackEvent('option_toggled', {
-                                    option_name: 'dark_mode',
-                                    option_state: isDarkModeOn ? 'on' : 'off'
-                                });
-                                // Load icon representing the current theme state
-                                App.loadSvgIcon(isDarkModeOn ? App.icons.moon : App.icons.sun, App.elements.darkModeButton);
-                            });
-                        }
-
+                                    var initialDarkModeState = App.theme.applyInitialTheme(); // Apply initial theme and get state
+                                    if (App.elements.darkModeButton) {
+                                        App.loadSvgIcon(initialDarkModeState ? App.icons.lightbulbOff : App.icons.lightbulbOn, App.elements.darkModeButton);
+                                    
+                                        App.elements.darkModeButton.addEventListener('click', () => {
+                                            var isDarkModeOn = App.elements.body.classList.contains('dark-mode');
+                                            isDarkModeOn = !isDarkModeOn; // Flip the state
+                                            App.theme.set(isDarkModeOn); // Apply new theme (adds/removes 'dark-mode' class)
+                                            localStorage.setItem('darkModeOn', isDarkModeOn); // Store new state
+                                            App.trackEvent('option_toggled', {
+                                                option_name: 'dark_mode',
+                                                option_state: isDarkModeOn ? 'on' : 'off'
+                                            });
+                                            // Load icon representing the current theme state (lightbulbOff for dark mode, lightbulbOn for light mode)
+                                            App.loadSvgIcon(isDarkModeOn ? App.icons.lightbulbOff : App.icons.lightbulbOn, App.elements.darkModeButton);
+                                        });
+                                    }
             // Carga el icono de debug
             App.loadSvgIcon(App.icons.bug, App.elements.debugButton);
 
