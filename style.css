@@ -207,62 +207,69 @@ input:checked + .slider:before {
     height: 44px; /* Adjust height to match control buttons */
     background-color: var(--secondary-text-color);
     border-radius: 22px; /* Half of height for pill shape */
-    display: flex;
-    align-items: center;
-    justify-content: space-around; /* Distribute items with space between them */
-    padding: 0 5px;
-    position: relative;
+    position: relative; /* For absolute positioning of thumb and visible icons */
     cursor: pointer;
     transition: background-color 0.2s ease;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
     margin-right: 8px; /* Gap between this switch and the next button */
+    overflow: hidden; /* Ensure icons don't overflow container */
 }
 
-.dark-mode-switch-icon {
-    width: 32px; /* Adjust icon size */
-    height: 32px;
+.dark-mode-switch-visible-icon {
+    position: absolute;
+    width: 24px; /* Smaller than thumb to be visible around it */
+    height: 24px; /* Smaller than thumb to be visible around it */
+    top: 10px; /* Vertically center (44px container - 24px icon = 20px, 10px top/bottom) */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1;
+    z-index: 1; /* Below thumb */
+    transition: color 0.3s ease, fill 0.3s ease, stroke 0.3s ease; /* For icon color change */
 }
 
-.dark-mode-switch-icon svg {
-    width: 80%;
-    height: 80%;
-    stroke: var(--text-color); /* Inherit color from theme */
+/* Position sun icon on the left */
+#dark-mode-sun-icon {
+    left: 10px; /* 3px (thumb left) + (38px (thumb) - 24px (icon)) / 2 = 10px */
+}
+
+/* Position moon icon on the right */
+#dark-mode-moon-icon {
+    left: 66px; /* 59px (thumb right) + (38px (thumb) - 24px (icon)) / 2 = 66px */
+}
+
+.dark-mode-switch-visible-icon svg {
+    width: 100%; /* Fill the smaller icon container */
+    height: 100%; /* Fill the smaller icon container */
+    /* Default color from theme (text-color) */
     fill: var(--text-color);
-    transition: stroke 0.2s ease, fill 0.2s ease;
+    stroke: var(--text-color);
 }
-
-/* Specific styling for when icons are active/inactive within the switch */
-.dark-mode-switch-container.dark .dark-mode-switch-icon.sun-icon svg,
-.dark-mode-switch-container.light .dark-mode-switch-icon.moon-icon svg {
-    stroke: white; /* Inactive icon color in dark mode */
-    fill: white; /* Inactive icon color in dark mode */
-}
-/* Ensure the active icon is clearly visible on the thumb */
-.dark-mode-switch-container.dark .dark-mode-switch-icon.moon-icon svg,
-.dark-mode-switch-container.light .dark-mode-switch-icon.sun-icon svg {
-    stroke: white; /* Active icon color */
-    fill: white; /* Active icon color */
-}
-
 
 .dark-mode-switch-thumb {
-    width: 38px; /* Slightly smaller than container height to allow padding */
+    width: 38px;
     height: 38px;
     background-color: var(--primary-color);
     border-radius: 50%;
     position: absolute;
-    top: 3px; /* Center vertically */
+    top: 3px;
     left: 3px; /* Initial position for sun */
     transition: transform 0.3s ease;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 2; /* Above icons */
 }
 
 .dark-mode-switch-container.dark .dark-mode-switch-thumb {
-    transform: translateX(52px); /* Move to right for moon, adjusted for centering */
+    transform: translateX(56px); /* Moves to align with moon icon (3px left + 56px = 59px) */
+}
+
+/* Color of icons when they are "active" (under the thumb) */
+.dark-mode-switch-container.light #dark-mode-sun-icon svg {
+    fill: white;
+    stroke: white;
+}
+.dark-mode-switch-container.dark #dark-mode-moon-icon svg {
+    fill: white;
+    stroke: white;
 }
 
 .info-banner {
