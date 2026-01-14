@@ -102,7 +102,7 @@
     #calendar-header { font-size: 26px; }
     .nav-arrow { font-size: 36px; }
     .calendar-cell { font-size: 18px; }
-    #sun-info { font-size: 30px; } /* Increased */
+    #sun-info { font-size: 36px; } /* Increased again */
     #sun-info svg { width: 25px; height: 25px; margin-right: 10px; } /* Ajustado */
 }
 
@@ -200,6 +200,19 @@ input:checked + .slider:before {
     width: 100%;
     height: 100%;
     stroke-width: 1.5;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.control-label {
+    font-size: 10px;
+    color: var(--text-color);
+    transition: color 0.5s ease;
 }
 
 .info-banner {
