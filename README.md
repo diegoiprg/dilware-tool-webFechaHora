@@ -6,6 +6,21 @@
 
 Una aplicación web simple, elegante e instalable para mostrar la fecha y hora actuales, junto con un calendario interactivo y funcionalidades inteligentes como un modo oscuro/claro dinámico. Ideal para mantener a la vista la información horaria esencial con un diseño moderno.
 
+
+
+## 📋 Índice
+
+*   [🌟 Motivación](#-motivación)
+*   [🚀 Demo en Vivo](#-demo-en-vivo)
+*   [✨ Características Principales](#-características-principales)
+*   [🛠️ Tecnologías Utilizadas](#-tecnologías-utilizadas)
+*   [📦 Cómo Usar](#-cómo-usar)
+*   [📸 Capturas de Pantalla](#-capturas-de-pantalla)
+    *   [Diseño Horizontal](#diseño-horizontal)
+    *   [Diseño Vertical](#diseño-vertical)
+*   [🤝 Contribuciones](#-contribuciones)
+*   [📄 Licencia](#-licencia)
+
 ## 🌟 Motivación
 
 Este proyecto nace de la necesidad de dar una segunda vida a dispositivos Android más antiguos y desfasados, aprovechando las capacidades de las Tecnologías Web Progresivas (PWA) para ofrecer una herramienta funcional y visualmente atractiva, a pesar de las limitaciones de hardware. La meta es crear una aplicación que sea igualmente útil y compatible tanto con dispositivos antiguos (tablets Android) como con los ecosistemas modernos de Apple (iPhone, iPad, Mac), demostrando la versatilidad y el alcance de las tecnologías web.
