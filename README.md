@@ -1,28 +1,15 @@
 # ⏳ Web Fecha y Hora
 
 ![Licencia](https://img.shields.io/badge/License-GPLv3-blue.svg)
-<!-- ![GitHub Pages](https://github.com/<username>/<repo-name>/workflows/deploy/badge.svg)  -->
-![Captura de Pantalla - Horizontal](screenshots/dashboard-horizontal.png)
+<!-- Placeholder for future GitHub Pages workflow badge if needed -->
 
-## 📸 Capturas de Pantalla
-
-### Diseño Horizontal
-
-![Captura de Pantalla - Horizontal](screenshots/dashboard-horizontal.png)
-_Vista del dashboard en orientación horizontal._
-
-### Diseño Vertical
-
-![Captura de Pantalla - Vertical](screenshots/dashboard-vertical.png)
-_Vista del dashboard en orientación vertical._
 
 Una aplicación web simple, elegante e instalable para mostrar la fecha y hora actuales, junto con un calendario interactivo y funcionalidades inteligentes como un modo oscuro/claro dinámico. Ideal para mantener a la vista la información horaria esencial con un diseño moderno.
 
 ## 🚀 Demo en Vivo
 
 Puedes ver y probar la aplicación desplegada en GitHub Pages aquí:
-[https://<USERNAME>.github.io/<REPOSITORY_NAME>/](https://<USERNAME>.github.io/<REPOSITORY_NAME>/)
-*(Reemplaza `<USERNAME>` con tu nombre de usuario de GitHub y `<REPOSITORY_NAME>` con el nombre de tu repositorio, por ejemplo, `dilware-tool-webFechaHora`.)*
+[https://diegoiprg.github.io/dilware-tool-webFechaHora/](https://diegoiprg.github.io/dilware-tool-webFechaHora/)
 
 ## ✨ Características Principales
 
@@ -53,16 +40,18 @@ Puedes ver y probar la aplicación desplegada en GitHub Pages aquí:
 2.  **Instala (Opcional):** Si tu navegador lo soporta, verás una opción para "Instalar aplicación" (normalmente en la barra de direcciones o menú del navegador). Esto la instalará como una aplicación nativa en tu dispositivo.
 3.  **Explora las Funciones:** Utiliza los botones en la esquina superior derecha para alternar el modo oscuro, activar la pantalla completa o ver el log de depuración. Navega por el calendario haciendo clic en las flechas.
 
-## ⚙️ Desarrollo Local
+## 📸 Capturas de Pantalla
 
-Si deseas contribuir o ejecutar el proyecto localmente:
+### Diseño Horizontal
 
-1.  **Clona el repositorio:**
-    ```bash
-    git clone https://github.com/<USERNAME>/dilware-tool-webFechaHora.git
-    cd dilware-tool-webFechaHora
-    ```
-2.  **Abre `index.html`:** Simplemente abre el archivo `index.html` en tu navegador web preferido. No se necesita ningún servidor local ni proceso de compilación.
+![Captura de Pantalla - Horizontal](screenshots/dashboard-horizontal.png)
+_Vista del dashboard en orientación horizontal._
+
+### Diseño Vertical
+
+![Captura de Pantalla - Vertical](screenshots/dashboard-vertical.png)
+_Vista del dashboard en orientación vertical._
+
 
 ## 🤝 Contribuciones
 
