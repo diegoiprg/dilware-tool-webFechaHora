@@ -1,7 +1,7 @@
 # ⏳ Web Fecha y Hora
 
 ![Licencia](https://img.shields.io/badge/License-GPLv3-blue.svg)
-[![GitHub Pages deploy](https://github.com/diegoiprg/dilware-tool-webFechaHora/actions/workflows/deploy.yml/badge.svg)](https://github.com/diegoiprg/dilware-tool-webFechaHora/actions/workflows/deploy.yml)
+
 
 
 Una aplicación web simple, elegante e instalable para mostrar la fecha y hora actuales, junto con un calendario interactivo y funcionalidades inteligentes como un modo oscuro/claro dinámico. Ideal para mantener a la vista la información horaria esencial con un diseño moderno.
