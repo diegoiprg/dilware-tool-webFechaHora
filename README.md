@@ -55,7 +55,7 @@ _Vista del dashboard en orientación vertical._
 
 ## 🤝 Contribuciones
 
-Las contribuciones son bienvenidas. Si tienes alguna idea para mejorar la aplicación, no dudes en abrir un *issue* o enviar un *pull request*.
+Las contribuciones son bienvenidas. Si tienes alguna idea para mejorar la aplicación, no dudes en abrir un *issue*.
 
 ## 📄 Licencia
 
