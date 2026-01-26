@@ -1,10 +1,14 @@
 # ⏳ Web Fecha y Hora
 
 ![Licencia](https://img.shields.io/badge/License-GPLv3-blue.svg)
-<!-- Placeholder for future GitHub Pages workflow badge if needed -->
+[![GitHub Pages deploy](https://github.com/diegoiprg/dilware-tool-webFechaHora/actions/workflows/deploy.yml/badge.svg)](https://github.com/diegoiprg/dilware-tool-webFechaHora/actions/workflows/deploy.yml)
 
 
 Una aplicación web simple, elegante e instalable para mostrar la fecha y hora actuales, junto con un calendario interactivo y funcionalidades inteligentes como un modo oscuro/claro dinámico. Ideal para mantener a la vista la información horaria esencial con un diseño moderno.
+
+## 🌟 Motivación
+
+Este proyecto nace de la necesidad de dar una segunda vida a dispositivos Android más antiguos y desfasados, aprovechando las capacidades de las Tecnologías Web Progresivas (PWA) para ofrecer una herramienta funcional y visualmente atractiva, a pesar de las limitaciones de hardware. La meta es crear una aplicación que sea igualmente útil y compatible tanto con dispositivos antiguos (tablets Android) como con los ecosistemas modernos de Apple (iPhone, iPad, Mac), demostrando la versatilidad y el alcance de las tecnologías web.
 
 ## 🚀 Demo en Vivo
 
@@ -29,15 +33,22 @@ Puedes ver y probar la aplicación desplegada en GitHub Pages aquí:
 
 ## 🛠️ Tecnologías Utilizadas
 
-*   **HTML5:** Estructura del contenido.
-*   **CSS3:** Estilos y diseño responsivo, incluyendo variables CSS para theming.
-*   **JavaScript (Vanilla JS):** Toda la lógica de la aplicación, sin frameworks adicionales.
-*   **Open-Meteo API:** Para obtener datos de amanecer y atardecer basados en la ubicación.
+*   **HTML5:** Estructura del contenido semántico.
+*   **CSS3:** Estilos y diseño responsivo, utilizando variables CSS para un theming dinámico.
+*   **JavaScript (Vanilla JS):** Toda la lógica de la aplicación implementada sin frameworks adicionales, haciendo uso intensivo de:
+    *   **Geolocation API:** Para obtener la ubicación del usuario y calcular los tiempos de amanecer/atardecer.
+    *   **Fullscreen API:** Para la funcionalidad de pantalla completa.
+    *   **Service Worker API:** Para habilitar las características de PWA, como el funcionamiento offline y la instalación.
+*   **Open-Meteo API:** Para obtener datos de amanecer y atardecer precisos basados en la ubicación geográfica.
 
 ## 📦 Cómo Usar
 
 1.  **Visita la Demo:** Accede a la aplicación a través del enlace de GitHub Pages.
-2.  **Instala (Opcional):** Si tu navegador lo soporta, verás una opción para "Instalar aplicación" (normalmente en la barra de direcciones o menú del navegador). Esto la instalará como una aplicación nativa en tu dispositivo.
+2.  **Instala (Opcional - Como PWA):** Puedes instalar esta aplicación directamente en tu dispositivo para una experiencia más integrada y acceso offline:
+    *   **En Chrome (Escritorio/Android):** Busca el icono de "Instalar aplicación" en la barra de direcciones o en el menú del navegador.
+    *   **En Safari (iOS/iPadOS):** Abre la aplicación en Safari, toca el icono de "Compartir" (el cuadrado con una flecha hacia arriba) y selecciona "Añadir a pantalla de inicio".
+    *   **En Microsoft Edge:** Similar a Chrome, busca el icono de instalación en la barra de direcciones.
+    Esto instalará la aplicación como una PWA (Progressive Web App) que podrás usar como cualquier otra aplicación nativa.
 3.  **Explora las Funciones:** Utiliza los botones en la esquina superior derecha para alternar el modo oscuro, activar la pantalla completa o ver el log de depuración. Navega por el calendario haciendo clic en las flechas.
 
 ## 📸 Capturas de Pantalla
