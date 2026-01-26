@@ -71,7 +71,3 @@ Las contribuciones son bienvenidas. Si tienes alguna idea para mejorar la aplica
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia Pública General GNU v3 (GPLv3). Consulta el archivo [`LICENSE`](LICENSE) para más detalles.
-
----
-
-**Nota:** Considera añadir una captura de pantalla de la aplicación en la sección superior para dar una primera impresión visual atractiva. Puedes guardarla en la carpeta `screenshots/` y actualizar la ruta en el README.
